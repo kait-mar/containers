@@ -14,10 +14,7 @@ private:
     int _capacity;
     int _size;
 public:
-    class   iterator: public std::random_access_iterator_tag
-    {
-
-    }
+    typedef typename std::random_access_iterator_tag iterator;
     /****************** member functions **********/
     vector()
     {
@@ -49,6 +46,22 @@ public:
     alloc   get_allocator() const
     {
         return(alloc());
+    }
+    /*************** iterators ******************/
+    iterator    begin()
+    {
+        iterator    x;
+        *x = (*this)[0];
+        return (x);
+    }
+    //add the const iterators
+    iterator    end()
+    {
+        if (this->size == 0)
+            return (this->begin());
+        iterator    z;
+        *z = this->array[this->size];
+        return (z);
     }
     /*******************  capacity  ***************/
     int size() //can be size_t
