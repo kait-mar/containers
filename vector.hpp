@@ -14,8 +14,20 @@ private:
     int _capacity;
     int _size;
 public:
-    typedef typename std::random_access_iterator_tag iterator;
+    /***************** member type *****************/
+    typedef T        value_type;
+    typedef alloc     allocator_type;
+    typedef T&        reference;
+    typedef const T&  const_reference;
+    typedef T*                  pointer;
+    typedef const T*             const_pointer;
+    typedef typename std::random_access_iterator_tag iterator; // add const
+    //create your own class iterator with all functions and operators (its type is random access)
+    typedef typename std::reverse_iterator  reverse_iterator; //add const
+    typedef ptrdiff_t          difference_type;
+    typedef size_t       size_type;
     /****************** member functions **********/
+    //add the other types of constructors
     vector()
     {
         this->_size = 0;
@@ -50,18 +62,24 @@ public:
     /*************** iterators ******************/
     iterator    begin()
     {
-        iterator    x;
-        *x = (*this)[0];
+        iterator    x(this->array);
         return (x);
     }
     //add the const iterators
     iterator    end()
     {
-        if (this->size == 0)
-            return (this->begin());
-        iterator    z;
-        *z = this->array[this->size];
-        return (z);
+        iterator    x(array + _size);
+        return (x);
+    }
+    reverse_iterator    rbegin()
+    {
+        reverse_iterator    x(array + _size - 1);
+        return (x);
+    }
+    reverse_iterator    rend()
+    {
+        reverse_iterator    x(array - 1);
+        return (x);
     }
     /*******************  capacity  ***************/
     int size() //can be size_t
@@ -82,6 +100,8 @@ public:
     }
 
     /**************** modifiers  *****************/
+    //use destroy and construct
+    //u can add other private func
     void    push_back(T &val)
     {
         if (this->_size == this->_capacity)
