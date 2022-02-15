@@ -3,14 +3,14 @@
 
 int main()
 {
-    std::vector<int> v(5, 42);
+    std::vector<int> vax(5, 42);
     std::cout << "********before resizing\n";
-    for (int i = 0; i < v.size(); i++)
-        std::cout<< v[i] << " ";
-    std::cout<< " | capacity = " << v.capacity();
-    v.resize(13, 7);
+    for (int i = 0; i < vax.size(); i++)
+        std::cout<< vax[i] << " ";
+    std::cout<< " | capacity = " << vax.capacity();
+    vax.resize(13, 7);
      std::cout << "\n*****AFTER resizing\n";
-    for (int i = 0; i < v.size(); i++)
-        std::cout<< v[i] << " ";
-    std::cout<< " | capacity = " << v.capacity();
+    for (int i = 0; i < vax.size(); i++)
+        std::cout<< vax[i] << " ";
+    std::cout<< " | capacity = " << vax.capacity();
 }
