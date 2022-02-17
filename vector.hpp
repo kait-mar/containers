@@ -21,7 +21,7 @@ namespace   ft
         typedef T*                  pointer;
         typedef const T*             const_pointer;
         typedef typename ft::vector_iterator<T> iterator; // add const
-        //typedef typename std::reverse_iterator  reverse_iterator; //add const
+        typedef typename ft::vector_reverse_iterator<T>  reverse_iterator; //add const
         typedef ptrdiff_t          difference_type;
         typedef size_t       size_type;
     private:
@@ -60,10 +60,23 @@ namespace   ft
                 _alloc.construct(array + i, x[i]);
         }
         template <class InputIterator>
-            vector (InputIterator first, InputIterator last,
-                    const allocator_type& alloc = allocator_type());                //Constructs a container with as many elements as the range [first,last), with each element constructed from its corresponding element in that range, in the same order.
-                        //    typename ft::enable_if<!ft::is_integral<InputIterator>::value >::type* = 0)
-
+        vector (InputIterator first, InputIterator last,
+                const allocator_type& alloc = allocator_type(),
+                typename ft::enable_if<!ft::is_integral(&first)>::type* = 0)      //Constructs a container with as many elements as the range [first,last), 
+                                                                                    //with each element constructed from its corresponding element in that range, in the same order.
+        {
+            std::cout<< "failure\n";
+            size_type   n = 0;
+            size_type   i = 0;
+            InputIterator   temp(first);
+            while (temp++ != last)
+                n++;
+            _size = n;
+            _capacity = n;
+            _alloc.allocate(_capacity);
+            while (first++ != last)
+                _alloc.construct(array + i++, *first);
+        }
                 /***** destructor ******/
         ~vector()
         {
@@ -106,7 +119,7 @@ namespace   ft
             iterator    x(array + _size);
             return (x);
         }
-        /*reverse_iterator    rbegin()
+        reverse_iterator    rbegin()
         {
             reverse_iterator    x(array + _size - 1);
             return (x);
@@ -115,7 +128,7 @@ namespace   ft
         {
             reverse_iterator    x(array - 1);
             return (x);
-        }*/
+        }
         /*******************  capacity  ***************/
         size_type   size()
         {
@@ -184,7 +197,6 @@ namespace   ft
             _capacity = n;
         }
         /**************** modifiers  *****************/
-        //u can add other private func
         void    push_back(reference val)
         {
             if (this->_size == this->_capacity)
@@ -338,9 +350,9 @@ namespace   ft
                 while (i != position) //try it with rbegin
                 {
                     --i;
-                    if (j != _size - 1)
-                        _alloc.destroy(array + j);
                     _alloc.construct(array + j + 1, *(array + j));
+                    //if (j != _size - 1)
+                    _alloc.destroy(array + j);
                     j--;
                 }
                 _alloc.destroy(array + j);
@@ -348,6 +360,88 @@ namespace   ft
                 _size++;
                 return (position);
             }
+        }
+        void insert (iterator position, size_type n, const value_type& val)
+        {
+            size_type j = 0;
+            if (_size + n > _capacity)
+            {
+                if (_size + n <= _capacity * 2)
+                    size_type   copy_capacity = _capacity * 2;
+                else
+                    size_type   copy_capacity = _size + n;
+                size_type   copy_size = _size + n;
+                iterator    ret;
+                pointer b = _alloc.allocate(copy_capacity);
+                iterator i = begin();
+                int check = 0;
+                while ( i != end())
+                {
+                    if (i  == position && check == 0)
+                    {
+                        if (n > 0)
+                        {
+                            n--;
+                            _alloc.construct(b + j++, val);
+                        }
+                        ret = iterator(b + j);
+                        while (n-- > 0)
+                            _alloc.construct(b + j++, val);
+                        check = 1;
+                    }
+                    else
+                    {
+                        _alloc.construct(b + j, *i);
+                        ++i;
+                    }
+                    j++;
+                }
+                this->~vector();
+                array = b;
+                _size = copy_size;
+                _capacity = copy_capacity;
+                return (ret);
+            }
+            else
+            {
+                size_type   j = 0;
+                vector  v(array, array + _size - 1, _alloc);
+                for (iterator i = begin(); i != end; i++)
+                {
+                    if (i == position)
+                    {
+                        while (n-- > 0)
+                        {
+                            _alloc.destroy(array + j);
+                            _alloc.construct(array + j, val);
+                            j++;
+                        }
+                        for (size_type i = 0; i < v.size(); i++)
+                        {
+                            _alloc.destroy(array + j);
+                            _allo.construct(array + j, v[i]);
+                        }
+                    }
+                    j++;
+                }
+                _size += n;
+                v->~vector();
+                return (position);
+            }
+        }
+        void swap (vector& x)
+        {
+            vector  temp(*this);
+
+            this.~vector();
+            _size = x.size();
+            _capacity = x.capacity();
+            _alloc = x.get_allocator();
+            array = _alloc.allocate(_capacity);
+            for (size_type i = 0; i < x.size(); i++)
+                _alloc.construct(array + j, x[j]);
+            x = temp;
+            temp.~vector();
         }
         //swap
         void    clear()
@@ -394,6 +488,12 @@ namespace   ft
         const_reference    back() const
         {
             return(this->array[this->_size - 1]);
+        }
+                /***** non member function overload  ******/
+        template <class T, class Alloc>
+        friend void swap (vector<T,Alloc>& x, vector<T,Alloc>& y) //what if we declare it as a normal function outside the class and x.swap is public!!
+        {
+            x.swap(y);
         }
     };
 };
