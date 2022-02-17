@@ -62,7 +62,8 @@ namespace   ft
         template <class InputIterator>
             vector (InputIterator first, InputIterator last,
                     const allocator_type& alloc = allocator_type());                //Constructs a container with as many elements as the range [first,last), with each element constructed from its corresponding element in that range, in the same order.
-        
+                        //    typename ft::enable_if<!ft::is_integral<InputIterator>::value >::type* = 0)
+
                 /***** destructor ******/
         ~vector()
         {

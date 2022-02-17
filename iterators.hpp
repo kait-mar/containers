@@ -50,21 +50,21 @@ namespace ft
             elem++;
             return (*this);
         }
-        vector_iterator<T> &operator--()
+        vector_iterator &operator--()
         {
             elem--;
             return (*this);
         }
-        vector_iterator<T> &operator++(int) //get_sure of this , try to compile i++
+        vector_iterator &operator++(int) //get_sure of this , try to compile i++
         {
             vector_iterator<T> res(*this);
-            elem++;
+            ++(-this);
             return (res);
         }
-        vector_iterator<T> &operator--(int)
+        vector_iterator &operator--(int)
         {
             vector_iterator<T> res(*this);
-            elem--;
+            ++(*this);
             return (res);
         }
         vector_iterator<T> &operator+(int a)
