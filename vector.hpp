@@ -429,6 +429,9 @@ namespace   ft
                 return (position);
             }
         }
+        template <class InputIterator>
+            void insert (iterator position, InputIterator first, InputIterator last, 
+                        typename ft::enable_if<!ft::is_integral<InputIterator>::value >::type* = 0)
         void swap (vector& x)
         {
             vector  temp(*this);
