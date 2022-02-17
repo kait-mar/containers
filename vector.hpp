@@ -32,16 +32,23 @@ namespace   ft
     public:
         /****************** member functions **********/
 
-                    /*** constructors ***/
-        
-        explicit vector (const allocator_type& alloc = allocator_type())            //Constructs an empty container, with no elements.
+        /*
+            Constructs an empty container, with no elements.
+        */
+    
+        explicit vector (const allocator_type& alloc = allocator_type())
         {
             _size = 0;
             _capacity = 0;
             _alloc = alloc;
         }
+
+        /*
+            Constructs a container with n elements. Each element is a copy of val.
+        */
+
         explicit vector (size_type n, const value_type& val = value_type(),
-                    const allocator_type& alloc = allocator_type())                //Constructs a container with n elements. Each element is a copy of val.
+                    const allocator_type& alloc = allocator_type())
         {
             _size = n;
             _capacity = n;
@@ -50,7 +57,11 @@ namespace   ft
             for (size_type i = 0; i < n; i++)
                 _alloc.construct(array + i, val);
         }
-        vector (const vector& x)                                                    //Constructs a container with a copy of each of the elements in x, in the same order.
+
+        /*
+            Constructs a container with a copy of each of the elements in x, in the same order.
+        */
+        vector (const vector& x)
         {
             _size = x._size;
             _capacity = x._capacity;
@@ -59,13 +70,18 @@ namespace   ft
             for (size_type i = 0; i < _size; i++)
                 _alloc.construct(array + i, x[i]);
         }
+
+        /*
+            Constructs a container with as many elements as the range [first,last), 
+            with each element constructed from its corresponding element in that range, in the same order.
+        */                                                                            
         template <class InputIterator>
         vector (InputIterator first, InputIterator last,
                 const allocator_type& alloc = allocator_type(),
-                typename ft::enable_if<!ft::is_integral(&first)>::type* = 0)      //Constructs a container with as many elements as the range [first,last), 
-                                                                                    //with each element constructed from its corresponding element in that range, in the same order.
+                typename ft::enable_if<!ft::is_integral<InputIterator>::value>::type var = 0)
         {
-            std::cout<< "failure\n";
+            var = 1;;
+            _alloc = alloc;
             size_type   n = 0;
             size_type   i = 0;
             InputIterator   temp(first);
@@ -363,13 +379,14 @@ namespace   ft
         }
         void insert (iterator position, size_type n, const value_type& val)
         {
-            size_type j = 0;
+            size_type   j = 0;
+            size_type   copy_capacity;
             if (_size + n > _capacity)
             {
                 if (_size + n <= _capacity * 2)
-                    size_type   copy_capacity = _capacity * 2;
+                    copy_capacity = _capacity * 2;
                 else
-                    size_type   copy_capacity = _size + n;
+                    copy_capacity = _size + n;
                 size_type   copy_size = _size + n;
                 iterator    ret;
                 pointer b = _alloc.allocate(copy_capacity);
@@ -400,13 +417,12 @@ namespace   ft
                 array = b;
                 _size = copy_size;
                 _capacity = copy_capacity;
-                return (ret);
             }
             else
             {
                 size_type   j = 0;
                 vector  v(array, array + _size - 1, _alloc);
-                for (iterator i = begin(); i != end; i++)
+                for (iterator i = begin(); i != end(); i++)
                 {
                     if (i == position)
                     {
@@ -419,19 +435,86 @@ namespace   ft
                         for (size_type i = 0; i < v.size(); i++)
                         {
                             _alloc.destroy(array + j);
-                            _allo.construct(array + j, v[i]);
+                            _alloc.construct(array + j, v[i]);
                         }
                     }
                     j++;
                 }
                 _size += n;
-                v->~vector();
-                return (position);
+                v.~vector();
             }
         }
         template <class InputIterator>
             void insert (iterator position, InputIterator first, InputIterator last, 
-                        typename ft::enable_if<!ft::is_integral<InputIterator>::value >::type* = 0)
+                        typename ft::enable_if<!ft::is_integral<InputIterator>::value >::type var = 0)
+        {
+            var = 1;
+            size_type   j = 0;
+            size_type   copy_capacity;
+            InputIterator   temp(first);
+            size_type       n = 0;
+
+            while (temp++ != last)
+                n++;
+            if (_size + n > _capacity)
+            {
+                if (_size + n <= _capacity * 2)
+                    copy_capacity = _capacity * 2;
+                else
+                    copy_capacity = _size + n;
+                size_type   copy_size = _size + n;
+                iterator    ret;
+                pointer b = _alloc.allocate(copy_capacity);
+                iterator i = begin();
+                int check = 0;
+                while ( i != end())
+                {
+                    if (i  == position && check == 0)
+                    {
+                        while (first++ != last)
+                            _alloc.construct(b + j++, *first);
+                        check = 1;
+                    }
+                    else
+                    {
+                        _alloc.construct(b + j, *i);
+                        ++i;
+                    }
+                    j++;
+                }
+                this->~vector();
+                array = b;
+                _size = copy_size;
+                _capacity = copy_capacity;
+            }
+            else
+            {
+                size_type   j = 0;
+                vector  v(array, array + _size - 1, _alloc);
+                for (iterator i = begin(); i != end(); i++)
+                {
+                    if (i == position)
+                    {
+                        size_type   k = j;
+                        while (first++ != last)
+                        {
+                            _alloc.destroy(array + j);
+                            _alloc.construct(array + j, *first);
+                            j++;
+                        }
+                        for (size_type i = k; i < v.size(); i++)
+                        {
+                            _alloc.destroy(array + j); //what if it's not constructed before, is it okey ?
+                            _alloc.construct(array + j, v[i]);
+                            j++;
+                        }
+                        break ;
+                    }
+                    j++;
+                }
+                _size += n;
+            }
+        }
         void swap (vector& x)
         {
             vector  temp(*this);
@@ -442,11 +525,10 @@ namespace   ft
             _alloc = x.get_allocator();
             array = _alloc.allocate(_capacity);
             for (size_type i = 0; i < x.size(); i++)
-                _alloc.construct(array + j, x[j]);
+                _alloc.construct(array + i, x[i]);
             x = temp;
             temp.~vector();
         }
-        //swap
         void    clear()
         {
             for (size_type i = 0; i < _size; i++)
@@ -493,7 +575,6 @@ namespace   ft
             return(this->array[this->_size - 1]);
         }
                 /***** non member function overload  ******/
-        template <class T, class Alloc>
         friend void swap (vector<T,Alloc>& x, vector<T,Alloc>& y) //what if we declare it as a normal function outside the class and x.swap is public!!
         {
             x.swap(y);

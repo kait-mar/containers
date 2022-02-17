@@ -59,8 +59,8 @@ namespace ft
         }
         vector_iterator &operator++(int) //get_sure of this , try to compile i++
         {
-            vector_iterator<T> res(*this);
-            ++(-this);
+            vector_iterator res(*this);
+            ++(*this);
             return (res);
         }
         vector_iterator &operator--(int)
@@ -207,6 +207,5 @@ namespace ft
         }
     };
 };
-
 
 #endif
