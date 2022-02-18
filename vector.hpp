@@ -213,7 +213,7 @@ namespace   ft
             _capacity = n;
         }
         /**************** modifiers  *****************/
-        void    push_back(reference val)
+        void    push_back(const_reference val)
         {
             if (this->_size == this->_capacity)
             {
