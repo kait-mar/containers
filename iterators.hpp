@@ -47,49 +47,49 @@ namespace ft
         {
             return (elem == v.elem);
         }
-        vector_iterator<T> &operator++()
+        vector_iterator operator++()
         {
             elem++;
             return (*this);
         }
-        vector_iterator &operator--()
+        vector_iterator operator--()
         {
             elem--;
             return (*this);
         }
-        vector_iterator &operator++(int) //get_sure of this , try to compile i++
+        vector_iterator operator++(int) //get_sure of this , try to compile i++
         {
             vector_iterator res(*this);
             ++(*this);
             return (res);
         }
-        vector_iterator &operator--(int)
+        vector_iterator operator--(int)
         {
             vector_iterator<T> res(*this);
             --(*this);
             return (res);
         }
-        vector_iterator<T> &operator+(int a)
+        vector_iterator operator+(int a)
         {
-            vector_iterator<T>  &res(*this);
+            vector_iterator  res(*this);
             while (a--)
                 ++res;
             return (res);
         }
-        vector_iterator<T> &operator-(int a)
+        vector_iterator operator-(int a)
         {
-            vector_iterator<T>  &res(*this);
+            vector_iterator res(*this);
             while (a--)
                 --res;
             return (res);
         }
-        vector_iterator &operator+=(int a)
+        vector_iterator operator+=(int a)
         {
             while (a--)
                 ++(*this);
             return (*this);
         }
-        vector_iterator<T> &operator-=(int a)
+        vector_iterator operator-=(int a)
         {
             while (a--)
                 --(*this);

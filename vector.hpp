@@ -30,7 +30,6 @@ namespace   ft
         size_type             _size;
         allocator_type  _alloc;
     public:
-        /****************** member functions **********/
 
         /*
             Constructs an empty container, with no elements.
@@ -80,18 +79,21 @@ namespace   ft
                 const allocator_type& alloc = allocator_type(),
                 typename ft::enable_if<!ft::is_integral<InputIterator>::value>::type var = 0)
         {
-            var = 1;;
+            var = 0;
             _alloc = alloc;
             size_type   n = 0;
             size_type   i = 0;
             InputIterator   temp(first);
-            while (temp++ != last)
+            while (temp != last)
+            {
+                temp++;
                 n++;
+            }
             _size = n;
             _capacity = n;
-            _alloc.allocate(_capacity);
-            while (first++ != last)
-                _alloc.construct(array + i++, *first);
+            array = _alloc.allocate(_capacity);
+            while (first != last)
+                _alloc.construct(array + i++, *(first++));
         }
                 /***** destructor ******/
         ~vector()
@@ -103,6 +105,9 @@ namespace   ft
             _capacity = 0;
             _size = 0;
         }
+
+        /****************** member functions **********/
+
         vector<T>    &operator=(const vector<T> &v )
         {
             if (v._size > this->_capacity)
@@ -213,6 +218,23 @@ namespace   ft
             _capacity = n;
         }
         /**************** modifiers  *****************/
+
+        /*
+            Assigns new contents to the vector, replacing its current contents, and modifying its size accordingly.
+        */
+        void assign (size_type n, const value_type& val)
+        {
+            vector  v(n, val);
+            *this = v;
+        }
+        template <class InputIterator>
+        void assign (InputIterator first, InputIterator last,
+                    typename ft::enable_if<!ft::is_integral<InputIterator>::value>::type var = 0)
+        {
+            var = 0;
+            vector  v(first, last);
+            *this = v;
+        }
         void    push_back(const_reference val)
         {
             if (this->_size == this->_capacity)
@@ -330,6 +352,11 @@ namespace   ft
         iterator insert (iterator position, const value_type& val)
         {
             size_type j = 0;
+            if (position == end())
+            {
+                push_back(val);
+                return ;
+            }
             if (_size == _capacity)
             {
                 size_type   copy_capacity = _capacity * 2;
@@ -379,10 +406,18 @@ namespace   ft
         }
         void insert (iterator position, size_type n, const value_type& val)
         {
-            size_type   j = 0;
-            size_type   copy_capacity;
+            if (position == end())
+            {
+                while (n-- > 0)
+                {
+                    push_back(val);
+                }
+                return ;
+            }
             if (_size + n > _capacity)
             {
+                size_type   j = 0;
+                size_type   copy_capacity;
                 if (_size + n <= _capacity * 2)
                     copy_capacity = _capacity * 2;
                 else
@@ -396,12 +431,6 @@ namespace   ft
                 {
                     if (i  == position && check == 0)
                     {
-                        if (n > 0)
-                        {
-                            n--;
-                            _alloc.construct(b + j++, val);
-                        }
-                        ret = iterator(b + j);
                         while (n-- > 0)
                             _alloc.construct(b + j++, val);
                         check = 1;
@@ -410,8 +439,8 @@ namespace   ft
                     {
                         _alloc.construct(b + j, *i);
                         ++i;
+                        j++;
                     }
-                    j++;
                 }
                 this->~vector();
                 array = b;
@@ -421,11 +450,12 @@ namespace   ft
             else
             {
                 size_type   j = 0;
-                vector  v(array, array + _size - 1, _alloc);
-                for (iterator i = begin(); i != end(); i++)
+                for (iterator i = begin(); i != end(); ++i)
                 {
                     if (i == position)
                     {
+                        vector  v(array + j, array + _size, _alloc);
+                        _size += n;
                         while (n-- > 0)
                         {
                             _alloc.destroy(array + j);
@@ -435,18 +465,16 @@ namespace   ft
                         for (size_type i = 0; i < v.size(); i++)
                         {
                             _alloc.destroy(array + j);
-                            _alloc.construct(array + j, v[i]);
+                            _alloc.construct(array + j++, v[i]);
                         }
                     }
                     j++;
                 }
-                _size += n;
-                v.~vector();
             }
         }
         template <class InputIterator>
-            void insert (iterator position, InputIterator first, InputIterator last, 
-                        typename ft::enable_if<!ft::is_integral<InputIterator>::value >::type var = 0)
+        void insert (iterator position, InputIterator first, InputIterator last, 
+                    typename ft::enable_if<!ft::is_integral<InputIterator>::value >::type var = 0)
         {
             var = 1;
             size_type   j = 0;
@@ -454,8 +482,20 @@ namespace   ft
             InputIterator   temp(first);
             size_type       n = 0;
 
-            while (temp++ != last)
+            if (position == end())
+            {
+                while (first != last)
+                {
+                    push_back(*first);
+                    first++;
+                }
+                return ;
+            }
+            while (temp != last)
+            {
                 n++;
+                temp++;
+            }
             if (_size + n > _capacity)
             {
                 if (_size + n <= _capacity * 2)
@@ -463,7 +503,6 @@ namespace   ft
                 else
                     copy_capacity = _size + n;
                 size_type   copy_size = _size + n;
-                iterator    ret;
                 pointer b = _alloc.allocate(copy_capacity);
                 iterator i = begin();
                 int check = 0;
@@ -471,16 +510,16 @@ namespace   ft
                 {
                     if (i  == position && check == 0)
                     {
-                        while (first++ != last)
-                            _alloc.construct(b + j++, *first);
+                        while (first != last)
+                            _alloc.construct(b + j++, *(first++));
                         check = 1;
                     }
                     else
                     {
                         _alloc.construct(b + j, *i);
                         ++i;
+                        j++;
                     }
-                    j++;
                 }
                 this->~vector();
                 array = b;
@@ -490,19 +529,18 @@ namespace   ft
             else
             {
                 size_type   j = 0;
-                vector  v(array, array + _size - 1, _alloc);
                 for (iterator i = begin(); i != end(); i++)
                 {
                     if (i == position)
                     {
-                        size_type   k = j;
-                        while (first++ != last)
+                        vector  v(array + j, array + _size , _alloc);
+                        while (first != last)
                         {
                             _alloc.destroy(array + j);
-                            _alloc.construct(array + j, *first);
+                            _alloc.construct(array + j, *(first++));
                             j++;
                         }
-                        for (size_type i = k; i < v.size(); i++)
+                        for (size_type i = 0; i < v.size(); i++)
                         {
                             _alloc.destroy(array + j); //what if it's not constructed before, is it okey ?
                             _alloc.construct(array + j, v[i]);
@@ -575,13 +613,27 @@ namespace   ft
             return(this->array[this->_size - 1]);
         }
                 /***** non member function overload  ******/
-        friend void swap (vector<T,Alloc>& x, vector<T,Alloc>& y) //what if we declare it as a normal function outside the class and x.swap is public!!
+        friend void swap (vector& x, vector& y)
         {
             x.swap(y);
         }
+        /*
+            relational operators
+        */
+        friend bool operator== (const vector& lhs, const vector& rhs)
+        {
+            return (ft::equal(x.begin(), x.end(), y.begin()));
+        }
+        friend bool operator!= (const vector& lhs, const vector& rhs)
+        {
+            return (!operator==(lhs, rhs));
+        }
+        friend bool operator< (const vector& lhs, const vector& rhs)
+        {
+            return (!operator==(lhs, rhs));
+        }
     };
 };
-
 
 
 
