@@ -1,7 +1,7 @@
 #ifndef ITERATORS_HPP
 #define ITERATORS_HPP
 
-#include "support.hpp"
+#include "../STL/support.hpp"
 
 namespace ft
 {
@@ -105,6 +105,106 @@ namespace ft
         }
     };
 
+        /*          const_iterator  */
+    template<class T>
+    class   const_vector_iterator
+    {
+    public:
+        /*************** member type **************/
+        typedef const T                                   value_type;
+        typedef T*                                  pointer;
+        typedef std::random_access_iterator_tag     iterator_category; 
+        //typedef Distance                            difference_type;
+        //typedef Distance                            distance_type;
+        typedef T&                                  reference;
+    private:
+        pointer elem;
+    public:
+        /************* public function **********/
+        const_vector_iterator()
+        {
+            elem = NULL;
+        }
+        const_vector_iterator(pointer p)
+        {
+            elem = p;
+        }
+        const_vector_iterator(const const_vector_iterator &a)
+        {
+            elem = a.elem;
+        }
+        ~const_vector_iterator()
+        {}
+        const_vector_iterator &operator=(const const_vector_iterator &v)
+        {
+            elem = v.elem;
+            return (*this);
+        }
+        bool operator!=(const const_vector_iterator &v)
+        {
+            return (elem != v.elem);
+        }
+        bool operator==(const const_vector_iterator &v)
+        {
+            return (elem == v.elem);
+        }
+        const_vector_iterator operator++()
+        {
+            elem++;
+            return (*this);
+        }
+        const_vector_iterator operator--()
+        {
+            elem--;
+            return (*this);
+        }
+        const_vector_iterator operator++(int) //get_sure of this , try to compile i++
+        {
+            const_vector_iterator res(*this);
+            ++(*this);
+            return (res);
+        }
+        const_vector_iterator operator--(int)
+        {
+            const_vector_iterator res(*this);
+            --(*this);
+            return (res);
+        }
+        const_vector_iterator operator+(int a)
+        {
+            const_vector_iterator  res(*this);
+            while (a--)
+                ++res;
+            return (res);
+        }
+        const_vector_iterator operator-(int a)
+        {
+            const_vector_iterator res(*this);
+            while (a--)
+                --res;
+            return (res);
+        }
+        const_vector_iterator operator+=(int a)
+        {
+            while (a--)
+                ++(*this);
+            return (*this);
+        }
+        const_vector_iterator operator-=(int a)
+        {
+            while (a--)
+                --(*this);
+            return (*this);
+        }
+        value_type  operator*()
+        {
+            return (*elem);
+        }
+        pointer operator->()
+        {
+            return (elem);
+        }
+    };
             /* vector reverse iterator */
 
     template<class T>

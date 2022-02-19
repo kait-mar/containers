@@ -5,7 +5,7 @@
 #include <algorithm>
 #include <vector>
 #include <exception>
-#include "iterators.hpp"
+#include "../iterators/vector_iterators.hpp"
 
 namespace   ft
 {
@@ -14,16 +14,19 @@ namespace   ft
     {
     public:
         /***************** member type *****************/
-        typedef T        value_type;
-        typedef Alloc     allocator_type;
-        typedef T&        reference;
-        typedef const T&  const_reference;
-        typedef T*                  pointer;
-        typedef const T*             const_pointer;
-        typedef typename ft::vector_iterator<T> iterator; // add const
-        typedef typename ft::vector_reverse_iterator<T>  reverse_iterator; //add const
-        typedef ptrdiff_t          difference_type;
-        typedef size_t       size_type;
+        typedef T                                           value_type;
+        typedef Alloc                                       allocator_type;
+        typedef T&                                          reference;
+        typedef const T&                                    const_reference;
+        typedef T*                                          pointer;
+        typedef const T*                                    const_pointer;
+        typedef typename ft::vector_iterator<T>             iterator;
+        typedef typename ft::const_vector_iterator<T>       const_iterator;
+        typedef typename ft::vector_reverse_iterator<T>     reverse_iterator; //add const
+        typedef ptrdiff_t                                   difference_type;
+        typedef size_t                                      size_type;
+
+
     private:
         T               *array;
         size_type             _capacity;
@@ -129,17 +132,26 @@ namespace   ft
             return(_alloc);
         }
         /*************** iterators ******************/
+        /*const_iterator    begin() const
+        {
+            const_iterator    x(this->array);
+            return (x);
+        }*/
         iterator    begin()
         {
             iterator    x(this->array);
             return (x);
         }
-        //add the const iterators
         iterator    end()
         {
             iterator    x(array + _size);
             return (x);
         }
+        /*const_iterator    end() const
+        {
+            const_iterator    x(array + _size);
+            return (x);
+        }*/
         reverse_iterator    rbegin()
         {
             reverse_iterator    x(array + _size - 1);
@@ -622,7 +634,7 @@ namespace   ft
         */
         friend bool operator== (const vector& lhs, const vector& rhs)
         {
-            return (ft::equal(x.begin(), x.end(), y.begin()));
+            return (ft::equal(lhs.begin(), lhs.end(), rhs.begin()));
         }
         friend bool operator!= (const vector& lhs, const vector& rhs)
         {
@@ -630,7 +642,19 @@ namespace   ft
         }
         friend bool operator< (const vector& lhs, const vector& rhs)
         {
-            return (!operator==(lhs, rhs));
+            return (ft::lexicographical_compare(lhs.begin(), lhs.end(), rhs.begin(), rhs.end()));
+        }
+        friend bool operator> (const vector& lhs, const vector& rhs)
+        {
+            return (operator<(rhs, lhs));
+        }
+        friend bool operator<= (const vector& lhs, const vector& rhs)
+        {
+            return (!operator>(rhs, lhs));
+        }
+        friend bool operator>= (const vector& lhs, const vector& rhs)
+        {
+            return (!operator<(lhs, rhs));
         }
     };
 };
