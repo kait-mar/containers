@@ -1,4 +1,4 @@
-NAME= containers
+NAME= ft_containers
 
 CC= clang++ -g
 
@@ -14,7 +14,7 @@ DELETENAME= rm -rf $(NAME)
 
 all: $(NAME)
 $(NAME):
-	$(CC) $(FLAGS) $(SRCS)  -o containers
+	$(CC) $(FLAGS) $(SRCS)  -o ft_containers
 clean:
 	$(DELETEOBJ) $(DELETENAME)
 

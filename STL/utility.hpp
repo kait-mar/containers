@@ -70,13 +70,13 @@ namespace   ft
     {
         while (first1!=last1)
         {
-            if (!(*first1 == *first2))   // or: if (!pred(*first1,*first2)), for version 2
+            if (!(*first1 == *first2))
                 return (false);
             ++first1;
             ++first2;
         }
         return (true);
-    }
+    };
     template <class InputIterator1, class InputIterator2, class BinaryPredicate>
     bool equal (InputIterator1 first1, InputIterator1 last1,
               InputIterator2 first2, BinaryPredicate pred)
@@ -89,7 +89,7 @@ namespace   ft
             ++first2;
         }
         return (true);
-    }
+    };
     template <class InputIterator1, class InputIterator2>
     bool lexicographical_compare (InputIterator1 first1, InputIterator1 last1,
                                     InputIterator2 first2, InputIterator2 last2)
@@ -104,7 +104,41 @@ namespace   ft
             ++first2;
         }
         return (first2 != last2);
-    }
+    };
+    /** ft::pair **/
+    template <class T1, class T2>
+    struct pair
+    {
+    public:
+        /* member types */
+        typedef T1  first_type;
+        typedef T2  second_type;
+
+        /* member variables */
+    private:
+        first_type  first;
+        second_type second;
+    public:
+        pair(): first(first_type()), second(second_type())
+        {}
+        template<class U, class V> pair (const pair<U,V>& pr):
+        first(pr.first), second(pr.second)
+        {}
+        pair (const first_type& a, const second_type& b):
+        first(a), second(b)
+        {}
+        pair& operator= (const pair& pr)
+        {
+            first = pr.first;
+            second = pr.second;
+            return (*this);
+        }
+    };
+    template <class T1,class T2>
+    ft::pair<T1,T2> make_pair (T1 x, T2 y)
+    {
+        return ( ft::pair<T1,T2>(x,y) );
+    };
 };
 
 #endif
