@@ -24,6 +24,8 @@ public:
     //typedef value_compare                                     nested function class
     typedef Alloc                                               allocator_type;
     typedef ft::map_iterator<value_type>                        itertor;
+   // typedef typename ft::map_iterator<Key, T, Compare, Node, false>     iterator;
+   //typedef typename ft::map_iterator<Key, T, Compare, Node, true>      const_iterator;
     typedef typename allocator_type::reference                  reference;
     typedef typename allocator_type::const_reference            const_reference;
     typedef typename allocator_type::pointer                    pointer;
@@ -128,16 +130,17 @@ protected:
     node    *allocate_node(const value_type& val, node *parent)
     {
         node    *_node;
-        _node = _alloc_node(1);
-        _node->content = _alloc(1);
-        _alloc_node.construct(_node->content, val);
+
+        _node = _alloc_node.allocate(1);
+        // _alloc_node.construct(_node->content, val);
+        _alloc.construct(&(_node->content), val);
         _node->left = NULL;
         _node->right = NULL;
         _node->is_right = 0;
         _node->is_left = 0;
         _node->is_leaf = 1;
-        _node->parent = parent;
-        _node->balance_factor = height(_node->left) - height(_node->right);
+        _node->parent = parent; //check if we have no parent or just delete this link to parent
+        _node->balance_factor = height(_node->left) - height(_node->right); //we don't need it saraha
         return (_node);
     }
 
@@ -257,4 +260,8 @@ protected:
     }
 };
 
+// _comp is equivalent to operator <. So:
+//      - operator>(lhs, rhs)  <==>  _comp(rhs, lhs)
+//      - operator<=(lhs, rhs)  <==>  !_comp(rhs, lhs)
+//      - operator>=(lhs, rhs)  <==>  !_comp(lhs, rhs)
 #endif
