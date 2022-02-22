@@ -89,12 +89,12 @@ public:
         {
             _root = allocate_node(val);
             _last_elem = root;
-            return (ft::make_pair<iterator, bool>(iterator(_root->content), true));
+            return (ft::make_pair<iterator, bool>(iterator(&_root->content), true));
         }
         itertor i;
         if ((i = find(val.first)) != end())
             return (ft::make_pair<iterator, bool>(i, false));
-        new_insert(val);
+        _put(val, _root);
     }
 
         /** operations **/
@@ -158,7 +158,7 @@ protected:
             if (!node->right)
             {
                 node->right = allocate_node(val, node);
-                update_balance(node->right);   
+                update_balance(node->right);
             }
             else
                 _put(val, node->right);
