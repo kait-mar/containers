@@ -14,6 +14,18 @@ template < class Key,                                     // map::key_type
            class Alloc = std::allocator<ft::pair<const Key,T> >    // map::allocator_type
            > class map
 {
+private:
+    struct node
+    {
+        ft::pair<const key_type, mapped_type>  content;
+        node*                                   parent;
+        node*                                   left;
+        node*                                   right;
+        int                                     balance_factor    /* = h(left) - h(right) */
+        // bool        is_right;
+        // bool        is_left;
+        // bool        is_leaf;
+    };
 public:
 
                 /**** member type  ****/
@@ -22,8 +34,8 @@ public:
     typedef ft::pair<const key_type, mapped_type>               value_type;
     typedef Compare                                             key_compare;
     //typedef value_compare                                     nested function class
-    typedef Alloc                                               allocator_type;
-    typedef ft::map_iterator<value_type>                        itertor;
+    typedef Alloc                                                               allocator_type;
+    typedef ft::map_iterator<key_type, mapped_type, node, key_compare>          itertor;
    // typedef typename ft::map_iterator<Key, T, Compare, Node, false>     iterator;
    //typedef typename ft::map_iterator<Key, T, Compare, Node, true>      const_iterator;
     typedef typename allocator_type::reference                  reference;
@@ -32,17 +44,6 @@ public:
     typedef typename allocator_type::const_pointer              const_pointer;
     typedef ptrdiff_t                                           difference_type;
     typedef size_t                                              size_type;
-    struct node
-    {
-        value_type  content;
-        node*       parent;
-        node*       left;
-        node*       right;
-        bool        is_right;
-        bool        is_left;
-        bool        is_leaf;
-        int         balance_factor                              /* = h(left) - h(right) */
-    };
     typedef std::allocator<node>                                allocator_node;
 
 private:
@@ -124,7 +125,7 @@ protected:
         _node->right = NULL;
         _node->is_right = 0;
         _node->is_left = 0;
-        _node->is_leaf = 1;
+        _node->is_leaf = 0;
     }
 
     node    *allocate_node(const value_type& val, node *parent)

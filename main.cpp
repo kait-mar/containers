@@ -3,13 +3,10 @@
 
 int main()
 {
-    // std::vector<int> v(5, 2);
-    // std::vector<int>::const_iterator   i = v.begin();
-    // //*i = 7;
-    // std::cout<< *i;
-    // ft::vector<int> a(5, 2);
-    // ft::vector<int>::const_iterator   j = a.begin();
-    // j++;
-    // std::cout<< *i;
+    std::map<int, std::string>  m;
+    m.insert(std::make_pair(5, "five"));
+
+    for (std::map<int, std::string>::iterator i = m.begin(); i != m.end(); i++)
+        std::cout<< i->first << std::endl;
     return 0;
 }
