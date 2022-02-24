@@ -12,7 +12,7 @@ namespace ft
         /*************** member type **************/
         typedef ft::pair<const key, T>      value_type;
         // typedef value_type*                          pointer;
-        typedef node*                          pointer;
+        typedef node*                               pointer;
         typedef std::bidirectional_iterator_tag     iterator_category; 
         typedef ptrdiff_t                            difference_type;
         typedef Compare                              key_compare;
@@ -22,26 +22,33 @@ namespace ft
 
     private:
         pointer _node;
-        //node    *_node;
+        pointer _lastElem;
+        key_compare _comp;
 public:
         /************* public function **********/
         map_iterator()
         {
             _node = NULL;
+            _lastElem = _node;
+            _comp = key_compare();
         }
-        map_iterator(pointer p)
+        map_iterator(pointer p, pointer last)
         {
             _node = p;
+            _lastElem = last;
+            _comp = key_compare();
         }
-        map_iterator(const map_iterator<T> &a)
+        map_iterator(const map_iterator &a)
         {
-            _node = a.node;
+            _node = a._node;
+            _lastElem = a._lastElem;
         }
         ~map_iterator()
         {}
-        map_iterator &operator=(const map_iterator<T> &v)
+        map_iterator &operator=(const map_iterator &v)
         {
-            _node = v.node;
+            _node = v._node;
+            _lastElem = v._lastElem;
             return (*this);
         }
         bool operator!=(const map_iterator &v)
@@ -52,9 +59,11 @@ public:
         {
             return (_node == v._node);
         }
-        map_iterator operator++() // add the case of ++to last element in map
+        map_iterator operator++()
         {
-            if (_node->right)
+            if (_node->right && _node->right == _lastElem)
+                _node = _lastElem;
+            else if (_node->right)
             {
                 _node = _node->right;
                 while (_node->left)
@@ -68,7 +77,7 @@ public:
                 else if (_node->parent && _node == _node->parent->right)
                 {
                     node* temp = _node->parent;
-                    while (temp && key_compare(temp->content->first, _node->first))
+                    while (temp && _comp(temp->content.first, _node->content.first))
                         temp = temp->parent;
                     _node = temp;
                 }
@@ -79,7 +88,10 @@ public:
         map_iterator operator--() // add the case of --to first element in map
         {
             pointer temp = _node;
-            if (_node->left)
+
+            if (_node == _lastElem)
+                _node = _lastElem->left;
+            else if (_node->left)
             {
                 temp = _node->left;
                 while (temp->right)
@@ -93,7 +105,7 @@ public:
                 else if (_node->parent && _node == _node->parent->left)
                 {
                     temp = _node->parent;
-                    while (temp && key_compare(_node->content.first, temp->content.first))
+                    while (temp && _comp(_node->content.first, temp->content.first))
                         temp = temp->parent;
                     _node = temp;
                 }
@@ -142,7 +154,7 @@ public:
         {
             return (_node->content);
         }
-        pointer operator->()
+        value_type *operator->()
         {
             return (&_node->content);
         }
