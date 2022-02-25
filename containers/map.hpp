@@ -85,7 +85,7 @@ namespace   ft
         map (const map& x);
 
         /**   iterators  **/
-        
+
         iterator begin() { return (iterator(_last_elem->right, _last_elem));}
         iterator    end() { return (iterator(_last_elem, _last_elem));}
 
@@ -94,12 +94,23 @@ namespace   ft
         bool    empty() {return (_size == 0);}
         // size_type max_size() const;
 
+        /** element access  **/
+        mapped_type& operator[] (const key_type& k)
+        {
+            iterator    i;
+            if ((i = find(k)) != end())
+                return (i->second);
+            T m();
+            value_type  _new(k, m);
+            return insert(_new);
+        }
         /** modifiers   **/
 
-        ft::pair<iterator,bool> insert (const value_type& val) /*change it to const*/
+        ft::pair<iterator,bool> insert (const value_type& val)
         {
             if (!_root)
             {
+                _size++;
                 _root = allocate_node(val);
                 _root->right = _last_elem;
                 _root->left = _last_elem;
@@ -110,6 +121,7 @@ namespace   ft
             iterator i;
             if ((i = find(val.first)) != end())
                 return (ft::make_pair<iterator, bool>(i, false));
+            _size++;
             return ft::make_pair<iterator, bool>(_put(val, _root), true);
         }
 
@@ -119,8 +131,8 @@ namespace   ft
             iterator    i = begin();
             while (i != end())
             {
-                if (_comp(i->first, k) && _comp(k, i->first)) //use compare
-                    break ;
+                if (!_comp(i->first, k) && !_comp(k, i->first)) //use compare
+                    return (i);
                 ++i;
             }
             return (i);
@@ -217,7 +229,7 @@ namespace   ft
             {
                 if (_node->left->balance_factor < 0)
                 {
-                    rotate_left(_node->left);
+                    rotate_left(_node->left); 
                     rotate_right(_node);
                 }
                 else
@@ -250,7 +262,7 @@ namespace   ft
         void    rotate_right(node *_node) //don't yu need to update the is_right/left of nodes ?
         {
             node    *new_root = _node->left;
-            _node->right = new_root->right;
+            _node->left = new_root->right;
             if (new_root->right /*this has just been added*/ && new_root->right != _last_elem)
                 new_root->right->parent = _node;
             new_root->parent = _node->parent;
@@ -267,6 +279,7 @@ namespace   ft
             _node->parent = new_root;
             _node->balance_factor = _node->balance_factor + 1 - std::min(new_root->balance_factor, 0);
             new_root->balance_factor = new_root->balance_factor + 1 + std::max(_node->balance_factor, 0);
+            //_node->left = NULL; /*this has just been added and could be wrong*/
         }
 
         int height(node *_node)
@@ -279,8 +292,10 @@ namespace   ft
 }
 
 
-// _comp is equivalent to operator <. So:
-//      - operator>(lhs, rhs)  <==>  _comp(rhs, lhs)
-//      - operator<=(lhs, rhs)  <==>  !_comp(rhs, lhs)
-//      - operator>=(lhs, rhs)  <==>  !_comp(lhs, rhs)
+/*
+    _comp is equivalent to operator <. So:
+        - operator>(lhs, rhs)  <==>  _comp(rhs, lhs)
+        - operator<=(lhs, rhs)  <==>  !_comp(rhs, lhs)
+        - operator>=(lhs, rhs)  <==>  !_comp(lhs, rhs)
+*/
 #endif

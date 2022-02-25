@@ -8,7 +8,7 @@
             "name": "(lldb) Launch",
             "type": "cppdbg",
             "request": "launch",
-            "program": "${workspaceFolder}/containers",
+            "program": "${workspaceFolder}/ft_containers",
             "args": [],
             "stopAtEntry": false,
             "cwd": "${fileDirname}",

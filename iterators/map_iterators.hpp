@@ -61,12 +61,13 @@ public:
         }
         map_iterator operator++()
         {
-            if (_node->right && _node->right == _lastElem)
+           // if (_node->right && _node->right == _lastElem) this will maybe replaced with this
+           if (_node == _lastElem->left) /*means it's the last element*/
                 _node = _lastElem;
             else if (_node->right)
             {
                 _node = _node->right;
-                while (_node->left)
+                while (_node->left && _node->left != _lastElem)
                     _node = _node->left;
             }
             else
@@ -94,7 +95,7 @@ public:
             else if (_node->left)
             {
                 temp = _node->left;
-                while (temp->right)
+                while (temp->right && temp->right != _lastElem)
                     temp = temp->right;
                 return (map_iterator(temp));
             }
