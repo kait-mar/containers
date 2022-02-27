@@ -100,10 +100,11 @@ namespace   ft
             iterator    i;
             if ((i = find(k)) != end())
                 return (i->second);
-            T m();
-            value_type  _new(k, m);
-            return insert(_new);
+            T m = T();
+            const value_type  _new(k, m);
+            return const_cast<int&>(insert(_new).first->first);
         }
+
         /** modifiers   **/
 
         ft::pair<iterator,bool> insert (const value_type& val)
@@ -125,6 +126,22 @@ namespace   ft
             return ft::make_pair<iterator, bool>(_put(val, _root), true);
         }
 
+    /*
+        The function optimizes its insertion time if position points to the element that will precede the inserted element.
+    */
+        iterator insert (iterator position, const value_type& val)
+        {
+            //how to know if it precede or not !!
+        }
+
+        template <class InputIterator>
+        void insert (InputIterator first, InputIterator last,
+                    typename ft::enable_if<!ft::is_integral<InputIterator>::value>::type var = 0)
+        {
+            //enable if is not a value type
+        }
+
+        void erase (iterator position);
             /** operations **/
         iterator find (const key_type& k)
         {
@@ -138,6 +155,19 @@ namespace   ft
             return (i);
         }
         // const_iterator find (const key_type& k) const;
+        size_type count (const key_type& k) const
+        {
+            if (find(k) == end())
+                return 0;
+            else
+                return 1;
+        }
+
+        /*
+            observers
+        */
+
+       key_compare key_comp() const {return (_comp);}
 
     protected:
 
