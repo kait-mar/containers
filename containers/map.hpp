@@ -25,9 +25,6 @@ namespace   ft
             node*                                   left;
             node*                                   right;
             int                                     balance_factor;    /* = h(left) - h(right) */
-            // bool        is_right;
-            // bool        is_left;
-            // bool        is_leaf;
         };
     public:
 
@@ -82,7 +79,8 @@ namespace   ft
             while (first != last)
                 insert(*(first++));
         }
-        map (const map& x);
+        map (const map& x): map(x.begin(), x.end())
+        {}
 
         /**   iterators  **/
 
@@ -102,6 +100,7 @@ namespace   ft
                 return (i->second);
             T m = T();
             const value_type  _new(k, m);
+            // value_type val = make_pair<key_type, mapped_type>(k, mapped_type());
             return const_cast<int&>(insert(_new).first->first);
         }
 
@@ -132,16 +131,45 @@ namespace   ft
         iterator insert (iterator position, const value_type& val)
         {
             //how to know if it precede or not !!
+            iterator    check;
+
+            if ((check = find(val.first)) != end())
+                return (check);
+            check = position;
+            if (position->first < val.first)
+            {
+                check++;
+                while (check != end() && check->first < val.first)
+                {
+                    check++;
+                    position++;
+                }
+            }
+            else
+            {
+                check--;
+                while (check != end() && check->first > val.first)
+                {
+                    check--;
+                    position--;
+                }
+            }
+            return (_put(val, position._node));
         }
 
         template <class InputIterator>
         void insert (InputIterator first, InputIterator last,
-                    typename ft::enable_if<!ft::is_integral<InputIterator>::value>::type var = 0)
+                    typename ft::enable_if<!ft::is_integral<InputIterator>::value >::type* = 0)
         {
             //enable if is not a value type
+            while (first != last)
+                insert(*first++);
         }
 
         void erase (iterator position);
+       /* {
+
+        }*/
             /** operations **/
         iterator find (const key_type& k)
         {
@@ -163,6 +191,30 @@ namespace   ft
                 return 1;
         }
 
+         iterator upper_bound(const key_type& k)
+        {
+            iterator i = begin();
+
+            while (i != end())
+            {
+                if (_comp(k, i->first))
+                    break;
+                i++;
+            }
+            return i;  
+        }
+        const_iterator upper_bound(const key_type& k) const;
+        iterator lower_bound(const key_type& k)
+        {
+            iterator i = begin();
+
+            while  (i != end())
+            {
+                if (!_comp(i->first, k))
+                    break;
+            }
+            return i;  
+        }
         /*
             observers
         */

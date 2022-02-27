@@ -92,6 +92,8 @@ public:
 
             if (_node == _lastElem)
                 _node = _lastElem->left;
+            else if (_node == _lastElem->right)
+                _node = _lastElem;
             else if (_node->left)
             {
                 temp = _node->left;
