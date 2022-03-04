@@ -104,7 +104,7 @@ namespace   ft
             return const_cast<int&>(insert(_new).first->first);
         }
 
-        /** modifiers   **/
+            /** modifiers   **/
 
         ft::pair<iterator,bool> insert (const value_type& val)
         {
@@ -166,10 +166,27 @@ namespace   ft
                 insert(*first++);
         }
 
-        void erase (iterator position);
-       /* {
+        size_type erase (const key_type& k)
+        {
+            iterator    i = find(k);
 
-        }*/
+            if (i == end())
+                return (0);
+            node    *_node = i._node;
+            deleteNode(_node);
+            return (1);
+        }
+        void erase (iterator position);
+        {
+            erase(position._node);
+        }
+        void erase (iterator first, iterator last)
+        {
+            while (first != last)
+            {
+                erase(first++);
+            }
+        }
             /** operations **/
         iterator find (const key_type& k)
         {
@@ -203,7 +220,7 @@ namespace   ft
             }
             return i;  
         }
-        const_iterator upper_bound(const key_type& k) const;
+        //const_iterator upper_bound(const key_type& k) const;
         iterator lower_bound(const key_type& k)
         {
             iterator i = begin();
@@ -234,6 +251,12 @@ namespace   ft
             _node->parent = parent;
             _node->balance_factor = 0;
             return (_node);
+        }
+
+        void    deallocate_node(node *_node)
+        {
+            _alloc.destroy(&(_node->content));
+            _alloc_node.deallocate(_node);
         }
 
         iterator    _put(const value_type& val, node *_node)
@@ -275,6 +298,44 @@ namespace   ft
                     _put(val, _node->right);
             }
             return (iterator(_new, _last_elem));
+        }
+
+        void    deleteNode(node *_node)
+        {
+            node    *tmp;
+            _size--;
+            if (_node == _root)
+                _root = NULL; //deallocate memory space
+             // node with only one child or no child
+            if (_node->left == NULL || _node->right == NULL)
+            {
+                if (_node->left)
+                    tmp = _node->left;
+                else if (_node->right)
+                    tmp = _node->right;
+                else
+                {
+                    temp = _node;
+                    _node = NULL:
+                }
+                //copy the tmp's family to _node
+                _node->parent = tmp->parent;
+                if (temp->parent->left == temp)
+                    tmp->parent->left = _node;
+                else
+                    tmp->parent->right = _node;
+                _node->content = tmp->content;
+                _node->right = tmp->right;
+                _node->left = tmp->left;
+                deallocate_node(temp);
+            }
+            else
+            {
+                tmp = minValue(_node->right);
+                _node->content = tmp->content;
+                deleteNode(tmp);
+            }
+            //update the balance
         }
 
         void    update_balance(node *_node)
@@ -362,6 +423,11 @@ namespace   ft
             _node->balance_factor = _node->balance_factor + 1 - std::min(new_root->balance_factor, 0);
             new_root->balance_factor = new_root->balance_factor + 1 + std::max(_node->balance_factor, 0);
             //_node->left = NULL; /*this has just been added and could be wrong*/
+        }
+
+        node    *minNode(node *_node)
+        {
+            
         }
 
         int height(node *_node)
