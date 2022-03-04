@@ -316,7 +316,7 @@ namespace   ft
                 else
                 {
                     temp = _node;
-                    _node = NULL:
+                    _node = NULL;
                 }
                 //copy the tmp's family to _node
                 _node->parent = tmp->parent;
@@ -336,6 +336,7 @@ namespace   ft
                 deleteNode(tmp);
             }
             //update the balance
+            update_balance(_node);
         }
 
         void    update_balance(node *_node)
@@ -427,7 +428,9 @@ namespace   ft
 
         node    *minNode(node *_node)
         {
-            
+            if (_node->left && _node->left != _lastElem)
+                return (minNode(_node->left));
+            return (_node);
         }
 
         int height(node *_node)
