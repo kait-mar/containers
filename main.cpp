@@ -14,11 +14,8 @@ int main()
     ft::pair<const int, int>  u(i = 3, i);
     a.insert(u);
     a[3] = 9835;
-    // ft::pair<const int, int>  v(i = 15, i);
-    // a.insert(u);
-    // ft::map<int, int>::iterator k = a.find(3);
-    // std::cout<< k->first << std::endl;
     a[98] = 42;
+    a.erase(1);
     for (ft::map<int, int>::iterator j = a.begin(); j != a.end(); ++j)
         std::cout<< j->first << std::endl;
     //std::cout<< a[3] << std::endl;

@@ -21,10 +21,10 @@ namespace ft
 
 
     private:
-        pointer _node;
         pointer _lastElem;
         key_compare _comp;
 public:
+        pointer _node;
         /************* public function **********/
         map_iterator()
         {

@@ -176,9 +176,9 @@ namespace   ft
             deleteNode(_node);
             return (1);
         }
-        void erase (iterator position);
+        void erase (iterator position)
         {
-            erase(position._node);
+            erase(position->first);
         }
         void erase (iterator first, iterator last)
         {
@@ -256,7 +256,7 @@ namespace   ft
         void    deallocate_node(node *_node)
         {
             _alloc.destroy(&(_node->content));
-            _alloc_node.deallocate(_node);
+            _alloc_node.deallocate(_node, 1);
         }
 
         iterator    _put(const value_type& val, node *_node)
@@ -315,30 +315,53 @@ namespace   ft
                     tmp = _node->right;
                 else
                 {
-                    temp = _node;
-                    _node = NULL;
+                    tmp = NULL;
+                    //_node = NULL;
                 }
-                //copy the tmp's family to _node
-                _node->parent = tmp->parent;
-                if (temp->parent->left == temp)
+                if (tmp)
+                    tmp->parent = _node->parent;
+                if (_node->parent->left == _node) /*is left*/
+                    _node->parent->left = tmp;
+                else                              /*is right*/
+                    _node->parent->right = tmp;
+                deallocate_node(_node);
+                /*_node->parent = tmp->parent;
+                if (tmp->parent->left == tmp)
                     tmp->parent->left = _node;
                 else
                     tmp->parent->right = _node;
                 _node->content = tmp->content;
                 _node->right = tmp->right;
                 _node->left = tmp->left;
-                deallocate_node(temp);
+                deallocate_node(tmp);*/
+                update_balance(tmp);
             }
             else
             {
-                tmp = minValue(_node->right);
-                _node->content = tmp->content;
-                deleteNode(tmp);
+                tmp = minNode(_node->right);
+                node    *_temp = tmp->parent;
+                if (tmp->parent->left == tmp)
+                    tmp->parent->left = NULL;
+                else
+                    tmp->parent->right = NULL;
+                if (_node->parent->left == _node)
+                    _node->parent->left = tmp;
+                else
+                    _node->parent->right = tmp;
+                tmp->left = _node->left;
+                tmp->right = _node->right;
+                deleteNode(_node);
+                update_balance(_temp);
             }
             //update the balance
-            update_balance(_node);
         }
 
+        /*void    swap_family(node *_node1, node *_node2)
+        {
+            node    *_tmp;
+
+            _tmp->lef
+        }*/
         void    update_balance(node *_node)
         {
             if (_node->balance_factor > 1 || _node->balance_factor < -1)
@@ -428,7 +451,7 @@ namespace   ft
 
         node    *minNode(node *_node)
         {
-            if (_node->left && _node->left != _lastElem)
+            if (_node->left && _node->left != _last_elem)
                 return (minNode(_node->left));
             return (_node);
         }
