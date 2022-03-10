@@ -174,6 +174,8 @@ namespace   ft
                 return (0);
             node    *_node = i._node;
             deleteNode(_node);
+            _size--;
+
             return (1);
         }
         void erase (iterator position)
@@ -186,6 +188,20 @@ namespace   ft
             {
                 erase(first++);
             }
+        }
+
+        /*
+            Removes all elements from the map container
+        */
+        void clear()
+        {
+            iterator j, i;
+            i = begin();
+            while (i != end())
+             {
+                j = i++;
+                erase(j);
+             }
         }
             /** operations **/
         iterator find (const key_type& k)
@@ -255,6 +271,8 @@ namespace   ft
 
         void    deallocate_node(node *_node)
         {
+            if (!_node)
+                return ;
             _alloc.destroy(&(_node->content));
             _alloc_node.deallocate(_node, 1);
         }
@@ -303,11 +321,60 @@ namespace   ft
         void    deleteNode(node *_node)
         {
             node    *tmp;
-            _size--;
-            if (_node == _root)
-                _root = NULL; //deallocate memory space
+
+            if (_node == _root && _size == 1)
+            {
+                _root = _last_elem;
+                deallocate_node(_node);
+            }
+            else if (_node == _root)
+            {
+                tmp = minNode(_node->right);
+                if (tmp == _node->right)
+                {
+                    _root = tmp;
+                    tmp->left = _node->left;
+                    if (_node == _last_elem->left)
+                        _last_elem->left = tmp;
+                    if (_last_elem->right == _node)
+                        _last_elem->right = tmp;
+                    deallocate_node(_node);
+                    update_balance(tmp);
+                    return ;
+                }
+                node    *_temp = tmp->parent;
+                node    *replace = construct_node(tmp);
+                deleteNode2(tmp);
+                if (_node->left)
+                    _node->left->parent = replace;
+                if (_node->right)
+                    _node->right->parent = replace;
+                replace->left = _node->left;
+                replace->right = _node->right;
+                _root = replace;
+                //deleteNode(_node);
+                deallocate_node(_node);
+                update_balance(_temp);
+            }
              // node with only one child or no child
-            if (_node->left == NULL || _node->right == NULL)
+            else if (_node->left == _last_elem || _node->right == _last_elem)
+            {
+                tmp = _node->parent;
+                if (_node->left == _last_elem)
+                {
+                    //the last node will always be in left of her parent
+                    _node->parent->left = _last_elem;
+                    _last_elem->right = _node->parent;
+                }
+                else
+                {
+                    _node->parent->right = _last_elem;
+                    _last_elem->left = _node->parent;
+                }
+                deallocate_node(_node);
+                update_balance(tmp);
+            }
+            else if (_node->left == NULL || _node->right == NULL)
             {
                 if (_node->left)
                     tmp = _node->left;
@@ -340,20 +407,83 @@ namespace   ft
             {
                 tmp = minNode(_node->right);
                 node    *_temp = tmp->parent;
-                if (tmp->parent->left == tmp)
-                    tmp->parent->left = NULL;
-                else
-                    tmp->parent->right = NULL;
-                if (_node->parent->left == _node)
-                    _node->parent->left = tmp;
-                else
-                    _node->parent->right = tmp;
-                tmp->left = _node->left;
-                tmp->right = _node->right;
-                deleteNode(_node);
+                node    *replace = construct_node(tmp, _node->parent);
+                deleteNode2(tmp);
+                if (_node->parent && _node->parent->left == _node)
+                    _node->parent->left = replace;
+                else if (_node->parent)
+                    _node->parent->right = replace;
+                replace->left = _node->left;
+                replace->right = _node->right;
+                if (_node->left)
+                    _node->left->parent = replace;
+                if (_node->right)
+                    _node->right->parent = replace;
+                //deleteNode(_node);
+                deallocate_node(_node);
                 update_balance(_temp);
             }
-            //update the balance
+        }
+
+        void    deleteNode2(node *_node)
+        {
+            node    *tmp;
+
+            if (!_node)
+                return ;
+             // this version is only for a node with only one child or no child wich is right
+            if (_node->right == _last_elem)
+            {
+                tmp = _node->parent;
+                _node->parent->right = _last_elem;
+                //_last_elem->left = _node->parent;
+                deallocate_node(_node);
+                update_balance(tmp);
+            }
+            else if (_node->left == NULL || _node->right == NULL)
+            {
+                node    *temp2;
+                if (_node->left)
+                    tmp = _node->left;
+                else if (_node->right)
+                    tmp = _node->right;
+                else
+                {
+                    tmp = NULL;
+                    if (_node->parent)
+                        temp2 = _node->parent;
+                }
+                if (tmp)
+                    tmp->parent = _node->parent;
+                if (_node->parent->left == _node) /*is left*/
+                    _node->parent->left = tmp;
+                else                              /*is right*/
+                    _node->parent->right = tmp;
+                deallocate_node(_node);
+                /*_node->parent = tmp->parent;
+                if (tmp->parent->left == tmp)
+                    tmp->parent->left = _node;
+                else
+                    tmp->parent->right = _node;
+                _node->content = tmp->content;
+                _node->right = tmp->right;
+                _node->left = tmp->left;
+                deallocate_node(tmp);*/
+                if (tmp)
+                    update_balance(tmp);
+                else if (temp2)
+                    update_balance(temp2);
+            }
+        }
+
+        node    *construct_node(node *_node, node *parent = NULL)
+        {
+            node    *_new = allocate_node(_node->content, parent);
+            _new->left = _node->left;
+            _new->right = _node->right;
+            if (_last_elem->left == _node)
+                _last_elem->left = _new;
+            return (_new);
         }
 
         /*void    swap_family(node *_node1, node *_node2)
@@ -362,9 +492,18 @@ namespace   ft
 
             _tmp->lef
         }*/
+
+        int     balance_factor(node *_node)
+        {
+            if (_node == NULL)
+                return 0;
+            return (height(_node->left) - height(_node->right));
+        }
+
         void    update_balance(node *_node)
         {
-            if (_node->balance_factor > 1 || _node->balance_factor < -1)
+            //if (_node->balance_factor > 1 || _node->balance_factor < -1)
+            if (balance_factor(_node) > 1 || balance_factor(_node) < -1)
             {
                 rebalance(_node);
                 return ;
@@ -375,16 +514,18 @@ namespace   ft
                     _node->parent->balance_factor++;
                 else if (_node->parent->right == _node)
                     _node->parent->balance_factor--;
-                if (_node->parent->balance_factor != 0)
+                // if (_node->parent->balance_factor != 0)
+                if (balance_factor(_node->parent) != 0)
                     update_balance(_node->parent);
             }
         }
 
         void    rebalance(node *_node)
         {
-            if (_node->balance_factor < 0 && _node->right)
+            // if (_node->balance_factor < 0 && _node->right)
+            if (balance_factor(_node) < 0 && _node->right)
             {
-                if (_node->right->balance_factor > 0)
+                if (balance_factor(_node->right) > 0)
                 {
                     rotate_right(_node->right);
                     rotate_left(_node);
@@ -392,11 +533,11 @@ namespace   ft
                 else
                     rotate_left(_node);
             }
-            else if (_node->balance_factor > 0 && _node->left)
+            else if (balance_factor(_node) > 0 && _node->left)
             {
-                if (_node->left->balance_factor < 0)
+                if (balance_factor(_node->left) < 0)
                 {
-                    rotate_left(_node->left); 
+                    rotate_left(_node->left);
                     rotate_right(_node);
                 }
                 else
@@ -458,7 +599,7 @@ namespace   ft
 
         int height(node *_node)
         {
-            if (!_node)
+            if (!_node || _node == _last_elem)
                 return (0);
             return (1 + std::max(height(_node->left), height(_node->right)));
         }

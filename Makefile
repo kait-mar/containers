@@ -1,6 +1,6 @@
 NAME= ft_containers
 
-CC= g++
+CC= clang++ -g
 
 FLAGS= -Wall -Wextra -Werror -std=c++98
 

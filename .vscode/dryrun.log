@@ -1,6 +1,5 @@
 make --dry-run --always-make --keep-going --print-directory
 make: Entering directory `/Users/kait-mar/Desktop/ft_contaners'
-g++ -Wall -Wextra -Werror -std=c++98 main.cpp  -o ft_containers
- 
+clang++ -g -Wall -Wextra -Werror -std=c++98 main.cpp  -o ft_containers
 make: Leaving directory `/Users/kait-mar/Desktop/ft_contaners'
  

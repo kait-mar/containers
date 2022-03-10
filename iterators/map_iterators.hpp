@@ -102,7 +102,7 @@ public:
                 return (map_iterator(temp));
             }
             else
-            {   //verify if _node is a right or left child
+            {
                 if (_node->parent && _node == _node->parent->right)
                     _node = _node->parent;
                 else if (_node->parent && _node == _node->parent->left)
@@ -115,7 +115,7 @@ public:
             }
             return (*this);
         }
-        /*map_iterator operator++(int) //get_sure of this , try to compile i++
+        map_iterator operator++(int) //get_sure of this , try to compile i++
         {
             map_iterator res(*this);
             ++(*this);
@@ -152,7 +152,7 @@ public:
             while (a--)
                 --(*this);
             return (*this);
-        }*/
+        }
         value_type  operator*()
         {
             return (_node->content);
