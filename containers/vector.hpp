@@ -132,11 +132,12 @@ namespace   ft
             return(_alloc);
         }
         /*************** iterators ******************/
-        /*const_iterator    begin() const
+        const_iterator    begin() const
         {
             const_iterator    x(this->array);
             return (x);
-        }*/
+        }
+
         iterator    begin()
         {
             iterator    x(this->array);
@@ -629,35 +630,42 @@ namespace   ft
         {
             x.swap(y);
         }
-        /*
-            relational operators
-        */
-        friend bool operator== (const vector& lhs, const vector& rhs)
-        {
-            return (ft::equal(lhs.begin(), lhs.end(), rhs.begin()));
-        }
-        friend bool operator!= (const vector& lhs, const vector& rhs)
-        {
-            return (!operator==(lhs, rhs));
-        }
-        friend bool operator< (const vector& lhs, const vector& rhs)
-        {
-            return (ft::lexicographical_compare(lhs.begin(), lhs.end(), rhs.begin(), rhs.end()));
-        }
-        friend bool operator> (const vector& lhs, const vector& rhs)
-        {
-            return (operator<(rhs, lhs));
-        }
-        friend bool operator<= (const vector& lhs, const vector& rhs)
-        {
-            return (!operator>(rhs, lhs));
-        }
-        friend bool operator>= (const vector& lhs, const vector& rhs)
-        {
-            return (!operator<(lhs, rhs));
-        }
+
     };
 };
+    /*
+        relational operators
+    */
+    /*template <class T, class Alloc>
+    bool operator== (const ft::vector<T,Alloc>& lhs, const ft::vector<T,Alloc>& rhs)
+    {
+        return (ft::equal(lhs.begin(), lhs.end(), rhs.begin()));
+    }
+    template <class T, class Alloc>
+    bool operator!= (const ft::vector<T,Alloc>& lhs, const ft::vector<T,Alloc>& rhs)
+    {
+        return (!operator==(lhs, rhs));
+    }
+    template <class T, class Alloc>
+    bool operator< (const ft::vector<T,Alloc>& lhs, const ft::vector<T,Alloc>& rhs)
+    {
+        return (ft::lexicographical_compare(lhs.begin(), lhs.end(), rhs.begin(), rhs.end()));
+    }
+    template <class T, class Alloc>
+    bool operator> (const ft::vector<T,Alloc>& lhs, const ft::vector<T,Alloc>& rhs)
+    {
+        return (operator<(rhs, lhs));
+    }
+    template <class T, class Alloc>
+    bool operator<= (const ft::vector<T,Alloc>& lhs, const ft::vector<T,Alloc>& rhs)
+    {
+        return (!operator>(rhs, lhs));
+    }
+    template <class T, class Alloc>
+    bool operator>= (const ft::vector<T,Alloc>& lhs, const ft::vector<T,Alloc>& rhs)
+    {
+        return (!operator<(lhs, rhs));
+    }*/
 
 
 

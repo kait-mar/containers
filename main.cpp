@@ -1,9 +1,9 @@
 #include "containers/vector.hpp"
-#include "containers/map.hpp"
+//#include "containers/map.hpp"
 
 int main()
 {
-    ft::map<int, int> a;
+    /*ft::map<int, int> a;
     int i = 5;
     ft::pair<const int, int>  s(i = 7, i);
     a.insert(s);
@@ -16,9 +16,9 @@ int main()
     // a[5] = 5;
     // a[75] = 75;
     //a[98] = 42;
-    /*a.erase(75);
+    a.erase(75);
     a.erase(3);
-    a.erase(7);*/
+    a.erase(7);
     // for (ft::map<int, int>::iterator j = a.begin(); j != a.end(); ++j)
     //     std::cout<< j->first << std::endl;
     a.clear();
@@ -27,11 +27,9 @@ int main()
         if (j == a.end())
             std::cout << "yes\n";
         std::cout<< j->first << std::endl;
-    }
-        
-    /*ft::vector<int>  a(5);
-    ft::vector<int> b(6);
-    if (a == b)
-        std::cout << "yes";*/
+    }*/
+
+    ft::vector<int>  a(5);
+    ft::vector<int>::const_iterator i = a.begin();
     return 0;
 }

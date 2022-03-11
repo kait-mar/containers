@@ -9,6 +9,7 @@
 #include "../iterators/map_iterators.hpp"
 #include "../STL/utility.hpp"
 
+
 namespace   ft
 {
     template < class Key,                                     // map::key_type
@@ -82,6 +83,24 @@ namespace   ft
         map (const map& x): map(x.begin(), x.end())
         {}
 
+        /**     destructor  **/
+        ~map()
+        {
+            clear();
+        }
+
+        map& operator= (const map& x)
+        {
+            this->clear();
+             _root = NULL;
+            _last_elem = _alloc_node.allocate(1);
+            _alloc.construct(&(_last_elem->content), value_type());
+            _last_elem->left = _root;
+            _last_elem->right = _root;
+            iterator    i = x.begin();
+            while (i =! x.end())
+                insert(*(i++));
+        }
         /**   iterators  **/
 
         iterator begin() { return (iterator(_last_elem->right, _last_elem));}
@@ -203,6 +222,17 @@ namespace   ft
                 erase(j);
              }
         }
+
+        /*
+            Exchanges the content of the container by the content of x, which is another map of the same type. Sizes may differ.
+        */
+        void swap (map& x)
+        {
+            map temp1(begin(), end());
+            this->operator=(x);
+            x = temp1;
+        }
+
             /** operations **/
         iterator find (const key_type& k)
         {
@@ -249,10 +279,19 @@ namespace   ft
             return i;  
         }
         /*
+            Returns the bounds of a range that includes all the elements in the container which have a key equivalent to k.
+        */
+        //pair<const_iterator,const_iterator> equal_range (const key_type& k) const;
+        pair<iterator,iterator>             equal_range (const key_type& k);
+
+        /*
             observers
         */
 
        key_compare key_comp() const {return (_comp);}
+       //value_compare value_comp() const;
+
+    allocator_type get_allocator() const {return (_alloc);}
 
     protected:
 
@@ -325,6 +364,8 @@ namespace   ft
             if (_node == _root && _size == 1)
             {
                 _root = _last_elem;
+                _last_elem->left = _root;
+                _last_elem->right = _root;
                 deallocate_node(_node);
             }
             else if (_node == _root)
@@ -333,6 +374,7 @@ namespace   ft
                 if (tmp == _node->right)
                 {
                     _root = tmp;
+                    tmp->parent = NULL;
                     tmp->left = _node->left;
                     if (_node == _last_elem->left)
                         _last_elem->left = tmp;
