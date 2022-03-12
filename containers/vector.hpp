@@ -21,9 +21,9 @@ namespace   ft
         typedef T*                                          pointer;
         typedef const T*                                    const_pointer;
         typedef typename ft::vector_iterator<value_type>             iterator;
-        // typedef typename ft::const_vector_iterator<T>       const_iterator;
         typedef typename ft::vector_iterator<const value_type>       const_iterator;
-        typedef typename ft::vector_reverse_iterator<T>     reverse_iterator; //add const
+        typedef typename ft::vector_reverse_iterator<T>     reverse_iterator;
+        typedef typename ft::vector_reverse_iterator<const T>     const_reverse_iterator;
         typedef ptrdiff_t                                   difference_type;
         typedef size_t                                      size_type;
 
@@ -133,36 +133,40 @@ namespace   ft
             return(_alloc);
         }
         /*************** iterators ******************/
-        const_iterator    begin() const
-        {
-            const_iterator    x(this->array);
-            return (x);
-        }
 
         iterator    begin()
         {
-            iterator    x(this->array);
-            return (x);
+            return (array);
         }
+        const_iterator    begin() const
+        {
+            return (array);
+        }
+    
         iterator    end()
         {
             iterator    x(array + _size);
             return (x);
         }
-        /*const_iterator    end() const
+        const_iterator    end() const
         {
-            const_iterator    x(array + _size);
-            return (x);
-        }*/
+            return (array + _size);
+        }
         reverse_iterator    rbegin()
         {
-            reverse_iterator    x(array + _size - 1);
-            return (x);
+            return (array + _size - 1);
+        }
+        const_reverse_iterator    rbegin() const
+        {
+            return (array + _size - 1);
         }
         reverse_iterator    rend()
         {
-            reverse_iterator    x(array - 1);
-            return (x);
+            return (array - 1);
+        }
+        const_reverse_iterator    rend() const
+        {
+            return (array - 1);
         }
         /*******************  capacity  ***************/
         size_type   size()
@@ -171,11 +175,11 @@ namespace   ft
         }
         //size_t  max_size()
         /*size_type       max_size() const
-            {
-                if (sizeof(value_type) == 1)
-                    return static_cast<size_type>(pow(2.0, 64.0) / 2.0) - 1;
-                return static_cast<size_type>(pow(2.0, 64.0) / static_cast<double>(sizeof(value_type))) - 1;
-            }*/
+        {
+            if (sizeof(value_type) == 1)
+                return static_cast<size_type>(pow(2.0, 64.0) / 2.0) - 1;
+            return static_cast<size_type>(pow(2.0, 64.0) / static_cast<double>(sizeof(value_type))) - 1;
+        }*/
         size_type capacity()
         {
             return (_capacity);
@@ -247,6 +251,7 @@ namespace   ft
             vector  v(n, val);
             *this = v;
         }
+
         template <class InputIterator>
         void assign (InputIterator first, InputIterator last,
                     typename ft::enable_if<!ft::is_integral<InputIterator>::value>::type var = 0)
@@ -643,7 +648,8 @@ namespace   ft
     /*
         relational operators
     */
-    /*template <class T, class Alloc>
+
+    template <class T, class Alloc>
     bool operator== (const ft::vector<T,Alloc>& lhs, const ft::vector<T,Alloc>& rhs)
     {
         return (ft::equal(lhs.begin(), lhs.end(), rhs.begin()));
@@ -672,8 +678,7 @@ namespace   ft
     bool operator>= (const ft::vector<T,Alloc>& lhs, const ft::vector<T,Alloc>& rhs)
     {
         return (!operator<(lhs, rhs));
-    }*/
-
+    }
 
 
 #endif

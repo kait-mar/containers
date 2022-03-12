@@ -37,8 +37,8 @@ namespace   ft
         //typedef value_compare                                     nested function class
         typedef Alloc                                                               allocator_type;
         typedef ft::map_iterator<key_type, mapped_type, node, key_compare>          iterator;
-    // typedef typename ft::map_iterator<Key, T, Compare, Node, false>     iterator;
-    //typedef typename ft::map_iterator<Key, T, Compare, Node, true>      const_iterator;
+        typedef ft::map_iterator<const key_type, mapped_type, node, key_compare>          const_iterator;
+        typedef ft::map_reverse_iterator<key_type, mapped_type, node, key_compare>          reverse_iterator;
         typedef typename allocator_type::reference                  reference;
         typedef typename allocator_type::const_reference            const_reference;
         typedef typename allocator_type::pointer                    pointer;
@@ -51,17 +51,18 @@ namespace   ft
 		class value_compare : std::binary_function<value_type, value_type, bool>
 		{
 		protected:
-			key_compare comp;
+			key_compare _comp;
 
 		public:
 			typedef bool result_type;
 			typedef value_type first_argument_type;
 			typedef value_type second_argument_type;
+
+            value_compare(key_compare &c = key_compare()) : _comp(c) {} // constructed with map's comparison object
 			bool operator()(const value_type &x, const value_type &y) const
 			{
-				return comp(x.first, y.first);
+				return _comp(x.first, y.first);
 			}
-			value_compare(const key_compare &c = key_compare()) : comp(c) {}
 		};
 
     private:
@@ -115,13 +116,38 @@ namespace   ft
             _last_elem->left = _root;
             _last_elem->right = _root;
             iterator    i = x.begin();
-            while (i =! x.end())
+            while (i != x.end())
                 insert(*(i++));
         }
         /**   iterators  **/
 
-        iterator begin() { return (iterator(_last_elem->right, _last_elem));}
-        iterator    end() { return (iterator(_last_elem, _last_elem));}
+        iterator begin()
+        { 
+            return (iterator(_last_elem->right, _last_elem));
+        }
+        const_iterator begin() const
+        { 
+            return (const_iterator(_last_elem->right, _last_elem));
+        }
+        iterator    end()
+        {
+            return (iterator(_last_elem, _last_elem));
+        }
+        const_iterator    end() const
+        {
+            return (const_iterator(_last_elem, _last_elem));
+        }
+        reverse_iterator rbegin()
+        { 
+            return (reverse_iterator(_last_elem->left, _last_elem));
+        }
+        //const_reverse_iterator rbegin() const;
+        reverse_iterator rend()
+        {
+            return (reverse_iterator(_last_elem, _last_elem));
+        }
+        // const_reverse_iterator rend() const;
+
 
         /**     capacity    **/
         size_t  size() {return (_size);}
@@ -194,8 +220,8 @@ namespace   ft
         }
 
         template <class InputIterator>
-        void insert (InputIterator first, InputIterator last,
-                    typename ft::enable_if<!ft::is_integral<InputIterator>::value >::type* = 0)
+        void insert (InputIterator first, InputIterator last
+                    /*, typename ft::enable_if<!ft::is_integral<InputIterator>::value >::type* = 0*/)
         {
             //enable if is not a value type
             //try to remove the enable if !!!!!!!!!!!!!
@@ -263,7 +289,17 @@ namespace   ft
             }
             return (i);
         }
-        // const_iterator find (const key_type& k) const;
+        const_iterator find (const key_type& k) const
+        {
+            const_iterator    i = begin();
+            while (i != end())
+            {
+                if (!_comp(i->first, k) && !_comp(k, i->first)) //use compare
+                    return (i);
+                ++i;
+            }
+            return (i);
+        }
         size_type count (const key_type& k) const
         {
             if (find(k) == end())
@@ -284,7 +320,18 @@ namespace   ft
             }
             return i;  
         }
-        //const_iterator upper_bound(const key_type& k) const;
+        const_iterator upper_bound(const key_type& k) const
+        {
+            const_iterator i = begin();
+
+            while (i != end())
+            {
+                if (_comp(k, i->first))
+                    break;
+                i++;
+            }
+            return i;  
+        }
         iterator lower_bound(const key_type& k)
         {
             iterator i = begin();
@@ -296,23 +343,38 @@ namespace   ft
             }
             return i;  
         }
+        const_iterator lower_bound(const key_type& k) const
+        {
+            const_iterator i = begin();
+
+            while  (i != end())
+            {
+                if (!_comp(i->first, k))
+                    break;
+            }
+            return i;  
+        }
+
         /*
             Returns the bounds of a range that includes all the elements in the container which have a key equivalent to k.
         */
-        //pair<const_iterator,const_iterator> equal_range (const key_type& k) const;
-        //pair<iterator,iterator>             equal_range (const key_type& k);
         pair<iterator, iterator> equal_range(const key_type &k)
 		{
 			return (pair<iterator, iterator>(lower_bound(k), upper_bound(k)));
 		}
+        pair<const_iterator,const_iterator> equal_range (const key_type& k) const
+        {
+			return (pair<const_iterator,const_iterator>(lower_bound(k), upper_bound(k)));
+		}
+
         /*
             observers
         */
 
        key_compare key_comp() const {return (_comp);}
-       //value_compare value_comp() const; || value_compare value_comp() const { return (_comp); } ??
+       value_compare value_comp() const { return (_comp); }
 
-    allocator_type get_allocator() const {return (_alloc);}
+        allocator_type get_allocator() const {return (_alloc);}
 
     protected:
 
@@ -391,12 +453,30 @@ namespace   ft
             }
             else if (_node == _root)
             {
-                tmp = minNode(_node->right);
+                if (_node == _last_elem->left && _size == 2)
+                {
+                    _root = _node->left;
+                    _last_elem->left = _node->left;
+                    _root->right = _last_elem;
+                    deallocate_node(_node);
+                    return ;
+                }
+                /*else if (_node == _last_elem->left)
+                {
+                    //search for the max node in _node->left or the node that preceede our _node
+                    iterator    i(_node, _last_elem);
+                    i--;
+                    tmp = i._node;
+                }*/
+                else
+                    tmp = minNode(_node->right);
                 if (tmp == _node->right)
                 {
                     _root = tmp;
                     tmp->parent = NULL;
                     tmp->left = _node->left;
+                    if (tmp->left)
+                        tmp->left->parent = tmp;
                     if (_node == _last_elem->left)
                         _last_elem->left = tmp;
                     if (_last_elem->right == _node)
@@ -414,6 +494,10 @@ namespace   ft
                     _node->right->parent = replace;
                 replace->left = _node->left;
                 replace->right = _node->right;
+                if (replace->left)
+                    replace->left->parent = replace;
+                if (replace->right)
+                    replace->right->parent = replace;
                 _root = replace;
                 //deleteNode(_node);
                 deallocate_node(_node);
@@ -548,13 +632,6 @@ namespace   ft
                 _last_elem->left = _new;
             return (_new);
         }
-
-        /*void    swap_family(node *_node1, node *_node2)
-        {
-            node    *_tmp;
-
-            _tmp->lef
-        }*/
 
         int     balance_factor(node *_node)
         {

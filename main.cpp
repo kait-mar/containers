@@ -1,15 +1,15 @@
 #include "containers/vector.hpp"
-//#include "containers/map.hpp"
+#include "containers/map.hpp"
 
 int main()
 {
-    /*ft::map<int, int> a;
+    ft::map<int, int> a;
     int i = 5;
-    ft::pair<const int, int>  s(i = 7, i);
+    ft::pair<const int, int>  s(7, i);
     a.insert(s);
-    ft::pair<const int, int>  t(i = 1, i);
+    ft::pair<const int, int>  t(1, i);
     a.insert(t);
-    ft::pair<const int, int>  u(i = 3, i);
+    ft::pair<const int, int>  u(3, i);
     a.insert(u);
     a[3] = 9835;
     // a[12] = 12;
@@ -27,9 +27,10 @@ int main()
         if (j == a.end())
             std::cout << "yes\n";
         std::cout<< j->first << std::endl;
-    }*/
-
-    ft::vector<int>  a(5);
-    ft::vector<int>::const_iterator i = a.begin();
+    }
+    /*ft::map<int, int>::const_iterator j = a.begin();
+    ft::vector<int> av(5);
+    ft::vector<int>::iterator   k = av.begin();
+    //ft::vector<int>::iterator   l = 5 + k;*/
     return 0;
 }
