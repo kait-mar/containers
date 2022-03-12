@@ -47,6 +47,23 @@ namespace   ft
         typedef size_t                                              size_type;
         typedef std::allocator<node>                                allocator_node;
 
+        // in C++98, it is required to inherit binary_function<value_type,value_type,bool>
+		class value_compare : std::binary_function<value_type, value_type, bool>
+		{
+		protected:
+			key_compare comp;
+
+		public:
+			typedef bool result_type;
+			typedef value_type first_argument_type;
+			typedef value_type second_argument_type;
+			bool operator()(const value_type &x, const value_type &y) const
+			{
+				return comp(x.first, y.first);
+			}
+			value_compare(const key_compare &c = key_compare()) : comp(c) {}
+		};
+
     private:
         size_type           _size;
         allocator_type      _alloc;
@@ -181,6 +198,7 @@ namespace   ft
                     typename ft::enable_if<!ft::is_integral<InputIterator>::value >::type* = 0)
         {
             //enable if is not a value type
+            //try to remove the enable if !!!!!!!!!!!!!
             while (first != last)
                 insert(*first++);
         }
@@ -282,14 +300,17 @@ namespace   ft
             Returns the bounds of a range that includes all the elements in the container which have a key equivalent to k.
         */
         //pair<const_iterator,const_iterator> equal_range (const key_type& k) const;
-        pair<iterator,iterator>             equal_range (const key_type& k);
-
+        //pair<iterator,iterator>             equal_range (const key_type& k);
+        pair<iterator, iterator> equal_range(const key_type &k)
+		{
+			return (pair<iterator, iterator>(lower_bound(k), upper_bound(k)));
+		}
         /*
             observers
         */
 
        key_compare key_comp() const {return (_comp);}
-       //value_compare value_comp() const;
+       //value_compare value_comp() const; || value_compare value_comp() const { return (_comp); } ??
 
     allocator_type get_allocator() const {return (_alloc);}
 
