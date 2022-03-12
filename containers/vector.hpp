@@ -20,8 +20,9 @@ namespace   ft
         typedef const T&                                    const_reference;
         typedef T*                                          pointer;
         typedef const T*                                    const_pointer;
-        typedef typename ft::vector_iterator<T>             iterator;
-        typedef typename ft::const_vector_iterator<T>       const_iterator;
+        typedef typename ft::vector_iterator<value_type>             iterator;
+        // typedef typename ft::const_vector_iterator<T>       const_iterator;
+        typedef typename ft::vector_iterator<const value_type>       const_iterator;
         typedef typename ft::vector_reverse_iterator<T>     reverse_iterator; //add const
         typedef ptrdiff_t                                   difference_type;
         typedef size_t                                      size_type;
@@ -169,6 +170,12 @@ namespace   ft
             return (_size);
         }
         //size_t  max_size()
+        /*size_type       max_size() const
+            {
+                if (sizeof(value_type) == 1)
+                    return static_cast<size_type>(pow(2.0, 64.0) / 2.0) - 1;
+                return static_cast<size_type>(pow(2.0, 64.0) / static_cast<double>(sizeof(value_type))) - 1;
+            }*/
         size_type capacity()
         {
             return (_capacity);
