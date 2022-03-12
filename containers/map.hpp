@@ -461,13 +461,13 @@ namespace   ft
                     deallocate_node(_node);
                     return ;
                 }
-                /*else if (_node == _last_elem->left)
+                else if (_node == _last_elem->left)
                 {
                     //search for the max node in _node->left or the node that preceede our _node
                     iterator    i(_node, _last_elem);
                     i--;
                     tmp = i._node;
-                }*/
+                }
                 else
                     tmp = minNode(_node->right);
                 if (tmp == _node->right)
