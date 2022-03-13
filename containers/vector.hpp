@@ -53,6 +53,7 @@ namespace   ft
         explicit vector (size_type n, const value_type& val = value_type(),
                     const allocator_type& alloc = allocator_type())
         {
+            std::cout <<"Enter1\n";
             _size = n;
             _capacity = n;
             _alloc = alloc;
@@ -78,11 +79,12 @@ namespace   ft
             Constructs a container with as many elements as the range [first,last), 
             with each element constructed from its corresponding element in that range, in the same order.
         */                                                                            
-        template <class InputIterator>
+      /*  template <class InputIterator>
         vector (InputIterator first, InputIterator last,
                 const allocator_type& alloc = allocator_type(),
                 typename ft::enable_if<!ft::is_integral<InputIterator>::value>::type var = 0)
         {
+            std::cout <<"Enter2\n";
             var = 0;
             _alloc = alloc;
             size_type   n = 0;
@@ -98,7 +100,7 @@ namespace   ft
             array = _alloc.allocate(_capacity);
             while (first != last)
                 _alloc.construct(array + i++, *(first++));
-        }
+        }*/
                 /***** destructor ******/
         ~vector()
         {
@@ -648,7 +650,6 @@ namespace   ft
     /*
         relational operators
     */
-
     template <class T, class Alloc>
     bool operator== (const ft::vector<T,Alloc>& lhs, const ft::vector<T,Alloc>& rhs)
     {

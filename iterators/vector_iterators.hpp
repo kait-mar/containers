@@ -220,4 +220,10 @@ namespace ft
     };
 };
 
+    template<class T>
+    ft::vector_iterator<T>  operator+(int a, ft::vector_iterator<T>& it)
+    {
+        return (it.operator+(a));
+    }
+
 #endif

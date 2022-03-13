@@ -465,7 +465,7 @@ namespace   ft
                 {
                     //search for the max node in _node->left or the node that preceede our _node
                     iterator    i(_node, _last_elem);
-                    i--;
+                    --i;
                     tmp = i._node;
                 }
                 else

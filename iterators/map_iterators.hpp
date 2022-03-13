@@ -99,7 +99,7 @@ namespace ft
                 temp = _node->left;
                 while (temp->right && temp->right != _lastElem)
                     temp = temp->right;
-                return (map_iterator(temp));
+                _node = temp;
             }
             else
             {

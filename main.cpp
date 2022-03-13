@@ -3,7 +3,7 @@
 
 int main()
 {
-    ft::map<int, int> a;
+    /*ft::map<int, int> a;
     int i = 5;
     ft::pair<const int, int>  s(7, i);
     a.insert(s);
@@ -21,16 +21,23 @@ int main()
     a.erase(7);
     // for (ft::map<int, int>::iterator j = a.begin(); j != a.end(); ++j)
     //     std::cout<< j->first << std::endl;
+    for (ft::map<int, int>::iterator j = a.begin(); j != a.end(); ++j)
+    {
+        std::cout<< j->first << std::endl;
+    }
     a.clear();
     for (ft::map<int, int>::iterator j = a.begin(); j != a.end(); ++j)
     {
-        if (j == a.end())
-            std::cout << "yes\n";
         std::cout<< j->first << std::endl;
-    }
-    /*ft::map<int, int>::const_iterator j = a.begin();
-    ft::vector<int> av(5);
-    ft::vector<int>::iterator   k = av.begin();
-    //ft::vector<int>::iterator   l = 5 + k;*/
+    }*/
+    /*ft::map<int, int>::const_iterator j = a.begin();*/
+    std::string m = "labhairi";
+    ft::vector<std::string> av(m, m);
+    //std::vector<std::string> av(m, m);
+   
+    //ft::vector<std::string>::iterator   k = av.begin();
+   // ft::vector<std::string>::iterator   l = 3 + k;
+
+    std::cout << av[0] << std::endl;
     return 0;
 }

@@ -8,7 +8,7 @@ namespace   ft
     struct enable_if {};
     template <>
     struct enable_if<true> { typedef char type; };
-
+  
     /*  is_integral  */
     template <class T>
     struct is_integral { 
