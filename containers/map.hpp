@@ -745,7 +745,25 @@ namespace   ft
         }
     };
 }
-
+/*
+template< class Key, class T, class Compare, class Alloc >
+bool operator==( const ft::map<Key,T,Compare,Alloc>& lhs,
+                 const ft::map<Key,T,Compare,Alloc>& rhs )
+{
+    ft::map<Key,T,Compare,Alloc> temp1, temp2;
+    if (lhs._size() <= rhs._size())
+    {
+        temp1 = lhs;
+        temp2 = rhs;
+    }
+    else
+    {
+        temp1 = rhs;
+        temp2 = lhs;
+    }
+    for (ft::map<Key,T,Compare,Alloc>::iterator)
+}
+*/
 
 /*
     _comp is equivalent to operator <. So:

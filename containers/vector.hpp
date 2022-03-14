@@ -22,8 +22,10 @@ namespace   ft
         typedef const T*                                    const_pointer;
         typedef typename ft::vector_iterator<value_type>             iterator;
         typedef typename ft::vector_iterator<const value_type>       const_iterator;
-        typedef typename ft::vector_reverse_iterator<T>     reverse_iterator;
-        typedef typename ft::vector_reverse_iterator<const T>     const_reverse_iterator;
+        // typedef typename ft::vector_reverse_iterator<T>     reverse_iterator;
+        typedef typename ft::reverse_iterator<iterator>         reverse_iterator;
+        // typedef typename ft::vector_reverse_iterator<const T>     const_reverse_iterator;
+        typedef typename ft::reverse_iterator<const_iterator>     const_reverse_iterator; //how to do so !!?
         typedef ptrdiff_t                                   difference_type;
         typedef size_t                                      size_type;
 
@@ -38,7 +40,7 @@ namespace   ft
         /*
             Constructs an empty container, with no elements.
         */
-    
+
         explicit vector (const allocator_type& alloc = allocator_type())
         {
             _size = 0;
@@ -69,7 +71,7 @@ namespace   ft
         {
             _size = x._size;
             _capacity = x._capacity;
-            _alloc = x.alloc;
+            _alloc = x._alloc;
             array = _alloc.allocate(_capacity);
             for (size_type i = 0; i < _size; i++)
                 _alloc.construct(array + i, x[i]);
@@ -79,7 +81,7 @@ namespace   ft
             Constructs a container with as many elements as the range [first,last), 
             with each element constructed from its corresponding element in that range, in the same order.
         */                                                                            
-      /*  template <class InputIterator>
+        template <class InputIterator>
         vector (InputIterator first, InputIterator last,
                 const allocator_type& alloc = allocator_type(),
                 typename ft::enable_if<!ft::is_integral<InputIterator>::value>::type var = 0)
@@ -100,7 +102,7 @@ namespace   ft
             array = _alloc.allocate(_capacity);
             while (first != last)
                 _alloc.construct(array + i++, *(first++));
-        }*/
+        }
                 /***** destructor ******/
         ~vector()
         {
@@ -156,19 +158,23 @@ namespace   ft
         }
         reverse_iterator    rbegin()
         {
-            return (array + _size - 1);
+            // return (array + _size - 1);
+            return (reverse_iterator(end()));
         }
         const_reverse_iterator    rbegin() const
         {
-            return (array + _size - 1);
+            // return (array + _size - 1);
+            return (const_reverse_iterator(end()));
         }
         reverse_iterator    rend()
         {
-            return (array - 1);
+            // return (array - 1);
+            return (reverse_iterator(begin()));
         }
         const_reverse_iterator    rend() const
         {
-            return (array - 1);
+            // return (array - 1);
+            return (const_reverse_iterator(begin()));
         }
         /*******************  capacity  ***************/
         size_type   size()

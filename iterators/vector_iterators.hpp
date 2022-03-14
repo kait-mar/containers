@@ -13,7 +13,7 @@ namespace ft
         /*************** member type **************/
         typedef T                                   value_type;
         typedef T*                                  pointer;
-        typedef std::random_access_iterator_tag     iterator_category; 
+        typedef std::random_access_iterator_tag     iterator_category;
         typedef ptrdiff_t                           difference_type; //sustruct two iterators result
         //typedef Distance                            distance_type;
         typedef T&                                  reference;
@@ -97,7 +97,7 @@ namespace ft
                 --(*this);
             return (*this);
         }
-        value_type  &operator*()
+        reference   operator*()
         {
             return (*elem);
         }
@@ -217,6 +217,10 @@ namespace ft
         {
             return elem;
         }
+        pointer get_elem()
+        {
+            return (elem);
+        }
     };
 };
 
@@ -225,5 +229,48 @@ namespace ft
     {
         return (it.operator+(a));
     }
+    template<class T>
+    bool operator== (const ft::vector_iterator<T>& lhs,
+                   const ft::vector_iterator<T>& rhs)
+    {
+        return (lhs.get_elem() == rhs.get_elem());
+    }
+    template<class T>
+    bool operator!= (const ft::vector_iterator<T>& lhs,
+                   const ft::vector_iterator<T>& rhs)
+    {
+        return (lhs.get_elem() != rhs.get_elem());
+    }
+    template<class T>
+    bool operator< (const ft::vector_iterator<T>& lhs,
+                   const ft::vector_iterator<T>& rhs)
+    {
+        return (lhs.get_elem() < rhs.get_elem());
+    }
+    template<class T>
+    bool operator<= (const ft::vector_iterator<T>& lhs,
+                   const ft::vector_iterator<T>& rhs)
+    {
+        return (lhs.get_elem() <= rhs.get_elem());
+    }
+    template<class T>
+    bool operator> (const ft::vector_iterator<T>& lhs,
+                   const ft::vector_iterator<T>& rhs)
+    {
+        return (lhs.get_elem() > rhs.get_elem());
+    }
+    template<class T>
+    bool operator>= (const ft::vector_iterator<T>& lhs,
+                   const ft::vector_iterator<T>& rhs)
+    {
+        return (lhs.get_elem() >= rhs.get_elem());
+    }
+    template<class T>
+    bool operator- (const ft::vector_iterator<T>& lhs,
+                   const ft::vector_iterator<T>& rhs)
+    {
+        return (lhs.get_elem() - rhs.get_elem());
+    }
+
 
 #endif
