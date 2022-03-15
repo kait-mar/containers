@@ -1,16 +1,16 @@
-#ifndef ITERATOR_TRAITS
-#define ITERATOR_TRAITS
+#ifndef ITERATOR_TRAITS_HPP
+#define ITERATOR_TRAITS_HPP
 
 namespace ft
 {
     template <class Iterator> class iterator_traits
     {
     public:
-        typedef Iterator::value_type    value_type;
-        typedef Iterator::pointer       pointer;
-        typedef Iterator::reference     reference;
-        typedef Iterator::difference_type   difference_type;
-        typedef Iterator::iterator_category iterator_category;
+        typedef typename Iterator::value_type    value_type;
+        typedef typename Iterator::pointer       pointer;
+        typedef typename Iterator::reference     reference;
+        typedef typename Iterator::difference_type   difference_type;
+        typedef typename Iterator::iterator_category iterator_category;
     };
 };
 

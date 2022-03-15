@@ -41,20 +41,12 @@ namespace ft
             elem = v.elem;
             return (*this);
         }
-        bool operator!=(const vector_iterator<T> &v)
-        {
-            return (elem != v.elem);
-        }
-        bool operator==(const vector_iterator<T> &v)
-        {
-            return (elem == v.elem);
-        }
-        vector_iterator operator++()
+        vector_iterator &operator++()
         {
             elem++;
             return (*this);
         }
-        vector_iterator operator--()
+        vector_iterator &operator--()
         {
             elem--;
             return (*this);
@@ -71,153 +63,49 @@ namespace ft
             --(*this);
             return (res);
         }
-        vector_iterator operator+(int a)
+        vector_iterator operator+(difference_type a) const
         {
             vector_iterator  res(*this);
             while (a--)
                 ++res;
             return (res);
         }
-        vector_iterator operator-(int a)
+        vector_iterator operator-(difference_type a) const
         {
             vector_iterator res(*this);
             while (a--)
                 --res;
             return (res);
         }
-        vector_iterator operator+=(int a)
+        vector_iterator &operator+=(difference_type a)
         {
             while (a--)
                 ++(*this);
             return (*this);
         }
-        vector_iterator operator-=(int a)
+        vector_iterator &operator-=(difference_type a)
         {
             while (a--)
                 --(*this);
             return (*this);
         }
-        reference   operator*()
+        reference   operator*() const
         {
             return (*elem);
         }
-        pointer operator->()
+        pointer operator->() const
         {
             return (elem);
+        }
+        reference operator[] (difference_type n) const //not sure about this !!!
+        {
+            return *(elem + n);
         }
         operator vector_iterator<const T> ()
         {
             return elem;
         }
-    };
-
-        
-
-        /* vector reverse iterator */
-
-    template<class T>
-    class   vector_reverse_iterator
-    {
-    public:
-        /*************** member type **************/
-        typedef T                                   value_type;
-        typedef T*                                  pointer;
-        typedef std::random_access_iterator_tag     iterator_category; 
-        //typedef Distance                            difference_type;
-        //typedef Distance                            distance_type;
-        typedef T&                                  reference;
-    private:
-        pointer elem;
-    public:
-        /************* public function **********/
-        vector_reverse_iterator()
-        {
-            elem = NULL;
-        }
-        vector_reverse_iterator(pointer p)
-        {
-            elem = p;
-        }
-        vector_reverse_iterator(const vector_reverse_iterator<T> &a)
-        {
-            elem = a.elem;
-        }
-        ~vector_reverse_iterator()
-        {}
-        vector_reverse_iterator<T> &operator=(const vector_reverse_iterator<T> &v)
-        {
-            elem = v.elem;
-            return (*this);
-        }
-        bool operator!=(const vector_reverse_iterator<T> &v)
-        {
-            return (elem != v.elem);
-        }
-        bool operator==(const vector_reverse_iterator<T> &v)
-        {
-            return (elem == v.elem);
-        }
-        vector_reverse_iterator<T> &operator++()
-        {
-            elem--;
-            return (*this);
-        }
-        vector_reverse_iterator &operator--()
-        {
-            elem++;
-            return (*this);
-        }
-        vector_reverse_iterator &operator++(int) //get_sure of this , try to compile i++
-        {
-            vector_reverse_iterator<T> res(*this);
-            ++(-this);
-            return (res);
-        }
-        vector_reverse_iterator &operator--(int)
-        {
-            vector_reverse_iterator<T> res(*this);
-            --(*this);
-            return (res);
-        }
-        vector_reverse_iterator<T> &operator+(int a)
-        {
-            vector_reverse_iterator<T>  &res(*this);
-            while (a--)
-                --res;
-            return (res);
-        }
-        vector_reverse_iterator<T> &operator-(int a)
-        {
-            vector_reverse_iterator<T>  &res(*this);
-            while (a--)
-                ++res;
-            return (res);
-        }
-        vector_reverse_iterator<T> &operator+=(int a)
-        {
-            while (a--)
-                ++(*this);
-            return (*this);
-        }
-        vector_reverse_iterator<T> &operator-=(int a)
-        {
-            while (a--)
-                --(*this);
-            return (*this);
-        }
-        value_type  operator*()
-        {
-            return (*elem);
-        }
-        pointer operator->()
-        {
-            return (elem);
-        }
-        operator vector_reverse_iterator<const T> ()
-        {
-            return elem;
-        }
-        pointer get_elem()
+        pointer get_elem() const
         {
             return (elem);
         }
@@ -228,6 +116,11 @@ namespace ft
     ft::vector_iterator<T>  operator+(int a, ft::vector_iterator<T>& it)
     {
         return (it.operator+(a));
+    }
+    template<class T>
+    ft::vector_iterator<T>  operator-(int a, ft::vector_iterator<T>& it)
+    {
+        return (it.operator-(a));
     }
     template<class T>
     bool operator== (const ft::vector_iterator<T>& lhs,
@@ -266,7 +159,7 @@ namespace ft
         return (lhs.get_elem() >= rhs.get_elem());
     }
     template<class T>
-    bool operator- (const ft::vector_iterator<T>& lhs,
+    typename ft::vector_iterator<T>::difference_type operator- (const ft::vector_iterator<T>& lhs,
                    const ft::vector_iterator<T>& rhs)
     {
         return (lhs.get_elem() - rhs.get_elem());

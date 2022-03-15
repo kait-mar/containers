@@ -1,0 +1,3 @@
+convert function of reverse_iterator
+the operators where should they be declared
+add operator[] to vector_iterator

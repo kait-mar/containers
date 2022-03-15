@@ -5,7 +5,11 @@
 #include <algorithm>
 #include <vector>
 #include <exception>
+#include <math.h>
 #include "../iterators/vector_iterators.hpp"
+#include "../iterators/reverse_iterator.hpp"
+#include "../STL/utility.hpp"
+
 
 namespace   ft
 {
@@ -55,7 +59,6 @@ namespace   ft
         explicit vector (size_type n, const value_type& val = value_type(),
                     const allocator_type& alloc = allocator_type())
         {
-            std::cout <<"Enter1\n";
             _size = n;
             _capacity = n;
             _alloc = alloc;
@@ -86,7 +89,6 @@ namespace   ft
                 const allocator_type& alloc = allocator_type(),
                 typename ft::enable_if<!ft::is_integral<InputIterator>::value>::type var = 0)
         {
-            std::cout <<"Enter2\n";
             var = 0;
             _alloc = alloc;
             size_type   n = 0;
@@ -177,18 +179,21 @@ namespace   ft
             return (const_reverse_iterator(begin()));
         }
         /*******************  capacity  ***************/
-        size_type   size()
+        size_type   size() const
         {
             return (_size);
         }
-        //size_t  max_size()
-        /*size_type       max_size() const
+
+        // (2^64)/sizeof(dataType) - 1 ||  2^(64-sizeof(type))-1
+        size_type       max_size() const 
         {
-            if (sizeof(value_type) == 1)
-                return static_cast<size_type>(pow(2.0, 64.0) / 2.0) - 1;
-            return static_cast<size_type>(pow(2.0, 64.0) / static_cast<double>(sizeof(value_type))) - 1;
-        }*/
-        size_type capacity()
+            if (sizeof(value_type) != 1)
+            {
+                return static_cast<size_type>(pow(2.0, 64.0) / sizeof(value_type)) - 1;
+            }
+            return static_cast<size_type>(pow(2.0, 64.0 - 1)) - 1;
+        }
+        size_type capacity() const
         {
             return (_capacity);
         }
@@ -230,7 +235,7 @@ namespace   ft
                 }
             }
         }
-        bool    empty()
+        bool    empty() const
         {
             if (this->_size == 0)
                 return (true);
@@ -388,7 +393,7 @@ namespace   ft
             if (position == end())
             {
                 push_back(val);
-                return ;
+                return end() - 1;
             }
             if (_size == _capacity)
             {
@@ -590,7 +595,7 @@ namespace   ft
         {
             vector  temp(*this);
 
-            this.~vector();
+            this->~vector();
             _size = x.size();
             _capacity = x.capacity();
             _alloc = x.get_allocator();
@@ -607,22 +612,22 @@ namespace   ft
             _size = 0;
         }
         /*************** element access ***************/
-        reference    operator[](int o)
+        reference    operator[](size_type o)
         {
             return (this->array[o]);
         }
-        const_reference    operator[](int o) const
+        const_reference    operator[](size_type o) const
         {
             return (this->array[o]);
         }
-        reference    at(int o)
+        reference    at(size_type o)
         {
             if (o >= this->_size)
                 throw(std::out_of_range("vector"));
             else
                 return (this->array[o]);
         }
-        const_reference    at(int o) const
+        const_reference    at(size_type o) const
         {
             if (o >= this->_size)
                 throw(std::out_of_range("vector"));

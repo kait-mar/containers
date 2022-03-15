@@ -31,13 +31,14 @@ int main()
         std::cout<< j->first << std::endl;
     }*/
     /*ft::map<int, int>::const_iterator j = a.begin();*/
-    std::string m = "labhairi";
-    ft::vector<std::string> av(m, m);
-    //std::vector<std::string> av(m, m);
-   
-    //ft::vector<std::string>::iterator   k = av.begin();
-   // ft::vector<std::string>::iterator   l = 3 + k;
-
-    std::cout << av[0] << std::endl;
+    std::vector<int> a(6, 43);
+    ft::vector<double>  a2;
+    std::vector<int>::iterator it = a.begin() + 3;
+    std::cout << it[2] << std::endl;
+    // ft::vector<int> av;
+    // for (int i = 0; i < 8; i++)
+    //     av.push_back(i);
+    // for (ft::vector<int>::const_reverse_iterator it = av.rbegin(); it != av.rend(); it++)
+    //     std::cout << *it << std::endl;
     return 0;
 }
