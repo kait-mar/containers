@@ -1,3 +1,5 @@
 convert function of reverse_iterator
 the operators where should they be declared
 add operator[] to vector_iterator
+add all the iterator traits struct
+a valid way for declaring the operators is inside the namespace

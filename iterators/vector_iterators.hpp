@@ -101,14 +101,35 @@ namespace ft
         {
             return *(elem + n);
         }
-        operator vector_iterator<const T> ()
+        operator vector_iterator<const T> () const
         {
-            return elem;
+            return (vector_terator<const T>(elem));
+            //return elem;
         }
         pointer get_elem() const
         {
             return (elem);
         }
+        /*NON member overloads*/
+        template<class T>
+        friend ft::vector_iterator<T>  operator+(int a, ft::vector_iterator<T>& it);
+        template<class T>
+        friend ft::vector_iterator<T>  operator-(int a, ft::vector_iterator<T>& it);
+        template<class T>
+        friend bool operator== (const ft::vector_iterator<T>& lhs, const ft::vector_iterator<T>& rhs);
+        template<class T>
+        friend bool operator!= (const ft::vector_iterator<T>& lhs, const ft::vector_iterator<T>& rhs);
+        template<class T>
+        friend bool operator< (const ft::vector_iterator<T>& lhs, const ft::vector_iterator<T>& rhs);
+        template<class T>
+        friend bool operator<= (const ft::vector_iterator<T>& lhs, const ft::vector_iterator<T>& rhs);
+        template<class T>
+        friend bool operator> (const ft::vector_iterator<T>& lhs, const ft::vector_iterator<T>& rhs);
+        template<class T>
+        friend bool operator>= (const ft::vector_iterator<T>& lhs, const ft::vector_iterator<T>& rhs);
+        template<class T>
+        friend typename ft::vector_iterator<T>::difference_type operator- (const ft::vector_iterator<T>& lhs,
+                   const ft::vector_iterator<T>& rhs);
     };
 };
 

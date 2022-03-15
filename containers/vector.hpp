@@ -34,7 +34,7 @@ namespace   ft
         typedef size_t                                      size_type;
 
 
-    private:
+    protected:
         T               *array;
         size_type             _capacity;
         size_type             _size;

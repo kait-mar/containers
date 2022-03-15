@@ -156,7 +156,7 @@ template <class Iterator>
     const ft::reverse_iterator<Iterator>& lhs,
     const ft::reverse_iterator<Iterator>& rhs)  //The number of elements between lhs and rhs.
     {
-        return lhs.base() - rhs.base();
+        return rhs.base() - lhs.base();
     }
 
 #endif
