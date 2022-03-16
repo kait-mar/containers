@@ -6,7 +6,7 @@
 #include <vector>
 #include <exception>
 #include <math.h>
-#include "../iterators/vector_iterators.hpp"
+//#include "../iterators/vector_iterators.hpp"
 #include "../iterators/reverse_iterator.hpp"
 #include "../STL/utility.hpp"
 
@@ -124,7 +124,7 @@ namespace   ft
             {
                 this->~vector();
                 this->_capacity = v._size;
-                _alloc.allocate(this->_capacity);
+                this->array = _alloc.allocate(this->_capacity);
             }
             for(size_type i = 0; i < v._size; i++)
             {
@@ -187,9 +187,12 @@ namespace   ft
         // (2^64)/sizeof(dataType) - 1 ||  2^(64-sizeof(type))-1
         size_type       max_size() const 
         {
+            unsigned long res;
             if (sizeof(value_type) != 1)
             {
-                return static_cast<size_type>(pow(2.0, 64.0) / sizeof(value_type)) - 1;
+                res = pow(2.0, 64.0) / sizeof(value_type) - 1;
+                return res;
+                // return static_cast<size_type>(pow(2.0, 64.0) / sizeof(value_type) - 1);
             }
             return static_cast<size_type>(pow(2.0, 64.0 - 1)) - 1;
         }
@@ -245,6 +248,11 @@ namespace   ft
         {
             if (n <= _capacity)
                 return ;
+            if (n > this->max_size())
+            {
+                throw(std::length_error("length error"));
+                return ;
+            }
             size_type   copy_size = _size;
             pointer     b = _alloc.allocate(n);
             for (size_type i = 0; i < _size; i++)
@@ -298,6 +306,8 @@ namespace   ft
             }
             else
             {
+                if (_size == 0)
+                    array = _alloc.allocate(this->_capacity);
                 _alloc.construct(array + _size, val);
                 _size++;
             }
@@ -446,6 +456,7 @@ namespace   ft
         {
             if (position == end())
             {
+                this->_capacity = n;
                 while (n-- > 0)
                 {
                     push_back(val);
@@ -520,6 +531,8 @@ namespace   ft
             InputIterator   temp(first);
             size_type       n = 0;
 
+            if (_capacity == 0)
+                _capacity = last - first;
             if (position == end())
             {
                 while (first != last)

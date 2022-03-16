@@ -25,9 +25,9 @@ namespace   ft
         explicit reverse_iterator (iterator_type it): _it(it)
         {}
         template <class Iter>
-        reverse_iterator (const reverse_iterator<Iterator>& rev_it)
+        reverse_iterator (const reverse_iterator<Iter>& rev_it)
         {
-            _it = rev_it._it;
+            _it = rev_it.base();
         }
         reverse_iterator    operator=(const reverse_iterator<Iterator>& rev_it)
         {
@@ -99,14 +99,12 @@ namespace   ft
         {
             return *(_it - n - 1);
         }
-        // operator reverse_iterator<const_iterator> ()
-        // {
-        //     return _it;
-        // }
     };
 };
 
-template <class Iterator>
+namespace   ft
+{
+    template <class Iterator>
   bool operator== (const ft::reverse_iterator<Iterator>& lhs,
                    const ft::reverse_iterator<Iterator>& rhs)
     {
@@ -158,5 +156,6 @@ template <class Iterator>
     {
         return rhs.base() - lhs.base();
     }
+};
 
 #endif
