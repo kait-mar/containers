@@ -7,7 +7,9 @@
 #include <map>
 #include <exception>
 #include "../iterators/map_iterators.hpp"
+#include "../iterators/reverse_iterator.hpp"
 #include "../STL/utility.hpp"
+
 
 
 namespace   ft
@@ -38,7 +40,8 @@ namespace   ft
         typedef Alloc                                                               allocator_type;
         typedef ft::map_iterator<key_type, mapped_type, node, key_compare>          iterator;
         typedef ft::map_iterator<const key_type, mapped_type, node, key_compare>          const_iterator;
-        typedef ft::map_reverse_iterator<key_type, mapped_type, node, key_compare>          reverse_iterator;
+        typedef ft::reverse_iterator<iterator>                                              reverse_iterator;
+        typedef ft::reverse_iterator<const_iterator>                                              const_reverse_iterator;
         typedef typename allocator_type::reference                  reference;
         typedef typename allocator_type::const_reference            const_reference;
         typedef typename allocator_type::pointer                    pointer;
@@ -88,7 +91,7 @@ namespace   ft
         map (InputIterator first, InputIterator last,
         const key_compare& comp = key_compare(),
         const allocator_type& alloc = allocator_type()):
-        _alloc(alloc), _alloc_node(allocator_node()), _size(0), _comp(comp)
+        _size(0), _alloc(alloc), _alloc_node(allocator_node()), _comp(comp)
         {
             _root = NULL;
             _last_elem = _alloc_node.allocate(1);
@@ -98,8 +101,10 @@ namespace   ft
             while (first != last)
                 insert(*(first++));
         }
-        map (const map& x): map(x.begin(), x.end())
-        {}
+        map (const map& x)
+        {
+            this->map(x.begin(), x.end());
+        }
 
         /**     destructor  **/
         ~map()
@@ -139,19 +144,25 @@ namespace   ft
         }
         reverse_iterator rbegin()
         { 
-            return (reverse_iterator(_last_elem->left, _last_elem));
+            return reverse_iterator(iterator(_last_elem->left, _last_elem));
         }
-        //const_reverse_iterator rbegin() const;
+        const_reverse_iterator rbegin() const
+        { 
+            return iterator(_last_elem->left, _last_elem);
+        }
         reverse_iterator rend()
         {
-            return (reverse_iterator(_last_elem, _last_elem));
+            return reverse_iterator(iterator(_last_elem, _last_elem));
         }
-        // const_reverse_iterator rend() const;
+        const_reverse_iterator rend() const
+        {
+            return iterator(_last_elem, _last_elem);
+        }
 
 
         /**     capacity    **/
-        size_t  size() {return (_size);}
-        bool    empty() {return (_size == 0);}
+        size_t  size() const {return (_size);}
+        bool    empty() const {return (_size == 0);}
         // size_type max_size() const;
 
         /** element access  **/
@@ -746,26 +757,55 @@ namespace   ft
         }
     };
 }
-/*
+
+template <class Key, class T, class Compare, class Alloc>
+  void swap (ft::map<Key,T,Compare,Alloc>& x, ft::map<Key,T,Compare,Alloc>& y)
+{
+    x.swap(y);
+}
+
 template< class Key, class T, class Compare, class Alloc >
 bool operator==( const ft::map<Key,T,Compare,Alloc>& lhs,
-                 const ft::map<Key,T,Compare,Alloc>& rhs )
+                const ft::map<Key,T,Compare,Alloc>& rhs )
 {
-    ft::map<Key,T,Compare,Alloc> temp1, temp2;
-    if (lhs._size() <= rhs._size())
-    {
-        temp1 = lhs;
-        temp2 = rhs;
-    }
-    else
-    {
-        temp1 = rhs;
-        temp2 = lhs;
-    }
-    for (ft::map<Key,T,Compare,Alloc>::iterator)
+    if (lhs.size() != rhs.size())
+        return (false);
+    return (ft::equal(lhs.begin(), lhs.end(), rhs.begin()));
 }
-*/
+template <class Key, class T, class Compare, class Alloc>
+bool operator!= ( const ft::map<Key,T,Compare,Alloc>& lhs,
+                    const ft::map<Key,T,Compare,Alloc>& rhs )
+{
+    return (!operator==(lhs, rhs));
+}
 
+template <class Key, class T, class Compare, class Alloc>
+bool operator< ( const ft::map<Key,T,Compare,Alloc>& lhs,
+                    const ft::map<Key,T,Compare,Alloc>& rhs )
+{
+    return (ft::lexicographical_compare(lhs.begin(), lhs.end(), rhs.begin(), rhs.end()));
+}
+
+template <class Key, class T, class Compare, class Alloc>
+bool operator> ( const ft::map<Key,T,Compare,Alloc>& lhs,
+                    const ft::map<Key,T,Compare,Alloc>& rhs )
+{
+    return (operator<(rhs, lhs));
+}
+
+template <class Key, class T, class Compare, class Alloc>
+bool operator<= ( const ft::map<Key,T,Compare,Alloc>& lhs,
+                    const ft::map<Key,T,Compare,Alloc>& rhs )
+{
+    return (!operator>(lhs, rhs));
+}
+
+template <class Key, class T, class Compare, class Alloc>
+bool operator>= ( const ft::map<Key,T,Compare,Alloc>& lhs,
+                    const ft::map<Key,T,Compare,Alloc>& rhs )
+{
+    return (!operator<(lhs, rhs));
+}
 /*
     _comp is equivalent to operator <. So:
         - operator>(lhs, rhs)  <==>  _comp(rhs, lhs)

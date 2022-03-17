@@ -40,7 +40,9 @@ namespace   ft
         }
         reference operator*() const
         {
-            iterator_type   res(_it - 1);
+            // iterator_type   res(_it - 1);
+            iterator_type   res(_it);
+            res--;
             return *res;
         }
         reverse_iterator& operator++()
@@ -91,9 +93,16 @@ namespace   ft
                 --(*this);
             return *this;
         }
+        // pointer operator->() const
+        // {
+        //     return &((_it - 1).operator*());
+        // }
         pointer operator->() const
         {
-            return &((_it - 1).operator*());
+            // iterator_type   res(_it);
+            // res--;
+
+            return &(operator*());
         }
         reference operator[] (difference_type n) const //not sure about this !!!
         {

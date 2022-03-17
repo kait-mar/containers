@@ -112,7 +112,7 @@ namespace   ft
                 _alloc.destroy(array + i);
             if (_size)
                 _alloc.deallocate(array, this->_capacity);
-            _capacity = 0;
+            // _capacity = 0; I removed it because of erase range tests
             _size = 0;
         }
 
@@ -319,7 +319,7 @@ namespace   ft
                 _alloc.destroy(array + _size-- - 1);
             }
         }
-        iterator erase (iterator position)
+        /*iterator erase (iterator position)
         {
             int _end = 0;
             iterator    check;
@@ -344,7 +344,7 @@ namespace   ft
                 j++;
                 if (ch == 1)
                 {
-                    check = i;
+                    check = i ;
                     ch = 0;
                 }
             }
@@ -355,8 +355,31 @@ namespace   ft
             if (_end == 1)
                 return (end());
             return (check);
+        }*/
+        iterator erase (iterator position)
+        {
+            int _end = 0;
+            iterator    check;
+
+            if (position == end())
+                _end = 1;
+            int j = 0;
+            for (iterator i = begin(); i != end(); ++i)
+            {
+                if (i == position)
+                {
+                    check = i;
+                    _alloc.destroy(array + j);
+                    _alloc.construct(array + j, array[j + 1]);
+                }
+                j++;
+            }
+            if (_end == 1)
+                return (end());
+            _size--;
+            return (check);
         }
-        iterator erase (iterator first, iterator last)
+        /*iterator erase (iterator first, iterator last)
         {
             int _end = 0;
             iterator    check;
@@ -396,6 +419,28 @@ namespace   ft
             if (_end == 1)
                 return (end());
             return (check);
+        }*/
+        iterator erase (iterator first, iterator last)
+        {
+            size_t  distance = last - first;
+
+            int k = 0;
+            size_type   copy_size = 0;
+            // if (first == begin() && last == end())
+                // this->~vector();
+            for (iterator i = begin(); i != end(); ++i)
+            {
+                if (i >= first && i < last)
+                {
+                    _alloc.destroy(array + k);
+                    if (k + distance < _size)
+                        _alloc.construct(array + k, array[k + distance]);
+                    copy_size++;
+                }
+                k++;
+            }
+            _size -= copy_size;
+            return (first);
         }
         iterator insert (iterator position, const value_type& val)
         {
@@ -606,9 +651,9 @@ namespace   ft
         }
         void swap (vector& x)
         {
-            vector  temp(*this);
+            vector  temp;
 
-            this->~vector();
+            /*this->~vector();
             _size = x.size();
             _capacity = x.capacity();
             _alloc = x.get_allocator();
@@ -616,7 +661,19 @@ namespace   ft
             for (size_type i = 0; i < x.size(); i++)
                 _alloc.construct(array + i, x[i]);
             x = temp;
-            temp.~vector();
+            temp.~vector();*/
+            temp.array = array;
+            temp._capacity = _capacity;
+            temp._size = _size;
+
+            array = x.array;
+            _capacity = x._capacity;
+            _size = x._size;
+
+            x.array = temp.array;
+            x._capacity = temp._capacity;
+            x._size = temp._size;
+            temp._size = 0; 
         }
         void    clear()
         {
@@ -677,6 +734,8 @@ namespace   ft
     template <class T, class Alloc>
     bool operator== (const ft::vector<T,Alloc>& lhs, const ft::vector<T,Alloc>& rhs)
     {
+        if (lhs.size() != rhs.size())
+            return (false);
         return (ft::equal(lhs.begin(), lhs.end(), rhs.begin()));
     }
     template <class T, class Alloc>
@@ -697,7 +756,7 @@ namespace   ft
     template <class T, class Alloc>
     bool operator<= (const ft::vector<T,Alloc>& lhs, const ft::vector<T,Alloc>& rhs)
     {
-        return (!operator>(rhs, lhs));
+        return (!operator>(lhs, rhs));
     }
     template <class T, class Alloc>
     bool operator>= (const ft::vector<T,Alloc>& lhs, const ft::vector<T,Alloc>& rhs)
