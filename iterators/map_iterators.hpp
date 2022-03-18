@@ -42,8 +42,8 @@ namespace ft
         template<class key1, class T1, class node1, class Compare1>
         map_iterator(const map_iterator<key1, T1, node1, Compare1>& a)
         {
-            _node = a._node;
-            _lastElem = a._lastElem;
+            _node = a.get_node(); //_node;
+            _lastElem = a.get_last(); //_lastElem;
         }
         ~map_iterator()
         {}
@@ -155,11 +155,11 @@ namespace ft
         //         --(*this);
         //     return (*this);
         // }
-        reference  operator*()
+        reference  operator*() const
         {
             return (_node->content);
         }
-        value_type *operator->()
+        pointer operator->() const
         {
             return (&(_node->content));
         }
@@ -167,7 +167,8 @@ namespace ft
         {
             return map_iterator<const key, T, node, Compare>(_node, _lastElem);
         }
-        pointer get_node() {return _node;}
+        node *get_node() const {return _node;}
+        node *get_last() const {return _lastElem;}
     };
 };
 

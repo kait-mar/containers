@@ -16,5 +16,8 @@ int main()
     my_m2.insert(ft::make_pair(3, 3));
     ft::map<int, int>::reverse_iterator it2 = my_m2.rbegin();
     std::cout << it2->second;
+    ft::map<int, char>::reverse_iterator it = my_m.rbegin();
+    bool cond = it->first == it->first;
+    std::cout << cond;
     return 0;
 }

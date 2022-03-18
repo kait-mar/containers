@@ -61,7 +61,7 @@ namespace   ft
 			typedef value_type first_argument_type;
 			typedef value_type second_argument_type;
 
-            value_compare(key_compare &c = key_compare()) : _comp(c) {} // constructed with map's comparison object
+            value_compare(const key_compare &c = key_compare()) : _comp(c) {} // constructed with map's comparison object
 			bool operator()(const value_type &x, const value_type &y) const
 			{
 				return _comp(x.first, y.first);
@@ -103,7 +103,7 @@ namespace   ft
         }
         map (const map& x)
         {
-            this->map(x.begin(), x.end());
+            /*this->*/map(x.begin(), x.end());
         }
 
         /**     destructor  **/
@@ -123,6 +123,7 @@ namespace   ft
             iterator    i = x.begin();
             while (i != x.end())
                 insert(*(i++));
+            return (*this);
         }
         /**   iterators  **/
 
@@ -148,7 +149,7 @@ namespace   ft
         }
         const_reverse_iterator rbegin() const
         { 
-            return iterator(_last_elem->left, _last_elem);
+            return const_reverse_iterator(iterator(_last_elem->left, _last_elem));
         }
         reverse_iterator rend()
         {
@@ -156,7 +157,7 @@ namespace   ft
         }
         const_reverse_iterator rend() const
         {
-            return iterator(_last_elem, _last_elem);
+            return const_reverse_iterator(iterator(_last_elem, _last_elem));
         }
 
 
@@ -168,13 +169,13 @@ namespace   ft
         /** element access  **/
         mapped_type& operator[] (const key_type& k)
         {
-            iterator    i;
-            if ((i = find(k)) != end())
-                return (i->second);
-            T m = T();
-            const value_type  _new(k, m);
-            // value_type val = make_pair<key_type, mapped_type>(k, mapped_type());
-            return const_cast<int&>(insert(_new).first->first);
+            // iterator    i;
+            // if ((i = find(k)) != end())
+            //     return (i->second);
+            // T m = T();
+            // const value_type  _new(k, m);
+            // return const_cast<int&>(insert(_new).first->first);
+            return (*((this->insert(ft::make_pair(k,mapped_type()))).first)).second;
         }
 
             /** modifiers   **/
@@ -384,7 +385,7 @@ namespace   ft
         */
 
        key_compare key_comp() const {return (_comp);}
-       value_compare value_comp() const { return (_comp); }
+       value_compare value_comp() const { return value_compare(_comp); }
 
         allocator_type get_allocator() const {return (_alloc);}
 
