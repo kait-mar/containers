@@ -101,9 +101,18 @@ namespace   ft
             while (first != last)
                 insert(*(first++));
         }
-        map (const map& x)
+        map (const map& x):
+        _size(0), _alloc(x._alloc), _alloc_node(x._alloc_node), _comp(x._comp)
         {
-            /*this->*/map(x.begin(), x.end());
+            iterator first = x.begin();
+            iterator    last = x.end();
+            _root = NULL;
+            _last_elem = _alloc_node.allocate(1);
+            _alloc.construct(&(_last_elem->content), value_type());
+            _last_elem->left = _root;
+            _last_elem->right = _root;
+            while (first != last)
+                insert(*(first++));
         }
 
         /**     destructor  **/
@@ -115,7 +124,9 @@ namespace   ft
         map& operator= (const map& x)
         {
             this->clear();
-             _root = NULL;
+            if (x.size() == 0)
+                return (*this);
+            _root = NULL;
             _last_elem = _alloc_node.allocate(1);
             _alloc.construct(&(_last_elem->content), value_type());
             _last_elem->left = _root;
@@ -145,19 +156,23 @@ namespace   ft
         }
         reverse_iterator rbegin()
         { 
-            return reverse_iterator(iterator(_last_elem->left, _last_elem));
+            // return reverse_iterator(iterator(_last_elem->left, _last_elem));
+            return reverse_iterator(iterator(_last_elem, _last_elem));
         }
         const_reverse_iterator rbegin() const
         { 
-            return const_reverse_iterator(iterator(_last_elem->left, _last_elem));
+            // return const_reverse_iterator(iterator(_last_elem->left, _last_elem));
+            return const_reverse_iterator(iterator(_last_elem, _last_elem));
         }
         reverse_iterator rend()
         {
-            return reverse_iterator(iterator(_last_elem, _last_elem));
+            // return reverse_iterator(iterator(_last_elem, _last_elem));
+            return reverse_iterator(iterator(_last_elem->right, _last_elem));
         }
         const_reverse_iterator rend() const
         {
-            return const_reverse_iterator(iterator(_last_elem, _last_elem));
+            // return const_reverse_iterator(iterator(_last_elem, _last_elem));
+            return const_reverse_iterator(iterator(_last_elem->right, _last_elem));
         }
 
 
@@ -175,7 +190,12 @@ namespace   ft
             // T m = T();
             // const value_type  _new(k, m);
             // return const_cast<int&>(insert(_new).first->first);
-            return (*((this->insert(ft::make_pair(k,mapped_type()))).first)).second;
+            
+            // return (*((this->insert(ft::make_pair(k,mapped_type()))).first)).second;
+            ft::pair<iterator,bool> it = this->insert(ft::make_pair(k,mapped_type()));
+            iterator    i = it.first;
+            return (i->second);
+
         }
 
             /** modifiers   **/
@@ -271,6 +291,8 @@ namespace   ft
         void clear()
         {
             iterator j, i;
+            if (_root == NULL)
+                return ;
             i = begin();
             while (i != end())
              {
@@ -414,41 +436,50 @@ namespace   ft
 
         iterator    _put(const value_type& val, node *_node)
         {
-            node    *_new = allocate_node(val, _node); //this is the new node we'll insert
+            node    *_new = NULL; //this is the new node we'll insert
 
             if (_comp(val.first, _node->content.first))
             {
                 if (!_node->left)
                 {
+                    _new = allocate_node(val, _node);
                     _node->left = _new;
                     update_balance(_new);
                 }
                 else if (_node->left && _node->left == _last_elem)
                 {
+                    _new = allocate_node(val, _node);
                     _node->left = _new;
                     _new->left = _last_elem;
                     _last_elem->right = _new;
                     update_balance(_new);
                 }
                 else
-                    _put(val, _node->left);
+                {
+                    _new = _put(val, _node->left)._node;
+                }
             }
             else
             {
                 if (!_node->right)
                 {
+                    _new = allocate_node(val, _node);
                     _node->right = _new;
                     update_balance(_new);
                 }
                 else if (_node->right && _node->right == _last_elem)
                 {
+                    _new = allocate_node(val, _node);
                     _node->right = _new;
                     _new->right = _last_elem;
                     _last_elem->left = _new;
                     update_balance(_new);
                 }
                 else
-                    _put(val, _node->right);
+                {
+                    _new = _put(val, _node->right)._node;
+                }
+                    
             }
             return (iterator(_new, _last_elem));
         }
@@ -528,8 +559,19 @@ namespace   ft
                 }
                 else
                 {
-                    _node->parent->right = _last_elem;
-                    _last_elem->left = _node->parent;
+                    // _node->parent->right = _last_elem;
+                    if (_node->left)
+                    {
+                        _node->parent->right = _node->left;
+                        _node->left->parent = _node->parent;
+                        _node->left->right = _last_elem;
+                        _last_elem->left = _node->left;
+                    }
+                    else
+                    {
+                        _node->parent->right = _last_elem;
+                        _last_elem->left = _node->parent;
+                    }
                 }
                 deallocate_node(_node);
                 update_balance(tmp);
