@@ -202,7 +202,7 @@ namespace   ft
 
         ft::pair<iterator,bool> insert (const value_type& val)
         {
-            if (!_root)
+            if (!_root || _root == _last_elem)
             {
                 _size++;
                 _root = allocate_node(val);
@@ -248,6 +248,7 @@ namespace   ft
                     position--;
                 }
             }
+            _size++;
             return (_put(val, position._node));
         }
 
@@ -375,6 +376,7 @@ namespace   ft
             {
                 if (!_comp(i->first, k))
                     break;
+                i++;
             }
             return i;  
         }
@@ -386,6 +388,7 @@ namespace   ft
             {
                 if (!_comp(i->first, k))
                     break;
+                i++;
             }
             return i;  
         }
@@ -491,6 +494,7 @@ namespace   ft
             if (_node == _root && _size == 1)
             {
                 _root = _last_elem;
+                // _root = NULL;
                 _last_elem->left = _root;
                 _last_elem->right = _root;
                 deallocate_node(_node);
@@ -554,8 +558,19 @@ namespace   ft
                 if (_node->left == _last_elem)
                 {
                     //the last node will always be in left of her parent
-                    _node->parent->left = _last_elem;
-                    _last_elem->right = _node->parent;
+                    // _node->parent->left = _last_elem;
+                    if (_node->right)
+                    {
+                        _node->parent->left = _node->right;
+                        _node->right->parent = _node->parent;
+                        _node->right->left = _last_elem;
+                        _last_elem->right = _node->right;
+                    }
+                    else
+                    {
+                        _node->parent->left = _last_elem;
+                        _last_elem->right = _node->parent;
+                    }
                 }
                 else
                 {
