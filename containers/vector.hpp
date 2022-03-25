@@ -294,15 +294,17 @@ namespace   ft
                 for(size_type i = 0; i < this->_size; i++)
                     _alloc.construct(b + i, array[i]);
                 _alloc.construct(b + _size, val);
-                size_type   cap2 = _capacity;
+                // size_type   cap2 = _capacity;
                 size_type   cap3 = _size;
-                this->~vector();
+                if (_capacity)
+                    this->~vector();
                 this->array = b;
                 _size = cap3 + 1;
-                if (cap2)
-                    _capacity = cap2 * 2;
-                else
-                    _capacity = cap2 + 1;
+                // if (cap2)
+                //     _capacity = cap2 * 2;
+                // else
+                //     _capacity = cap2 + 1;
+                _capacity = cap;
             }
             else
             {
@@ -501,7 +503,8 @@ namespace   ft
         {
             if (position == end())
             {
-                this->_capacity = n;
+                if (!_capacity)
+                    this->_capacity = n;
                 while (n-- > 0)
                 {
                     push_back(val);
@@ -536,7 +539,8 @@ namespace   ft
                         j++;
                     }
                 }
-                this->~vector();
+                if (_capacity)
+                    this->~vector();
                 array = b;
                 _size = copy_size;
                 _capacity = copy_capacity;
@@ -720,14 +724,14 @@ namespace   ft
         {
             return(this->array[this->_size - 1]);
         }
-                /***** non member function overload  ******/
-        friend void swap (vector& x, vector& y)
-        {
-            x.swap(y);
-        }
-
     };
 };
+    /***** non member function overload  ******/
+    template <class T, class Alloc>
+    void swap (ft::vector<T,Alloc>& x, ft::vector<T,Alloc>& y)
+    {
+        x.swap(y);
+    }
     /*
         relational operators
     */
