@@ -75,12 +75,14 @@ namespace   ft
         key_compare         _comp;
         node                *_root;
         node                *_last_elem;
+        int                 check_existence;
 
     public:
         explicit map (const key_compare& comp = key_compare(),
                 const allocator_type& alloc = allocator_type()):
-                _size(0), _alloc(alloc), _alloc_node(allocator_node()), _comp(comp)
+                _size(0), _alloc(alloc), _alloc_node(allocator_node()), _comp(comp), check_existence(0)
         {
+            check_existence = 0;
             _root = NULL;
             _last_elem = _alloc_node.allocate(1);
             _alloc.construct(&(_last_elem->content), value_type());
@@ -91,7 +93,7 @@ namespace   ft
         map (InputIterator first, InputIterator last,
         const key_compare& comp = key_compare(),
         const allocator_type& alloc = allocator_type()):
-        _size(0), _alloc(alloc), _alloc_node(allocator_node()), _comp(comp)
+        _size(0), _alloc(alloc), _alloc_node(allocator_node()), _comp(comp), check_existence(0)
         {
             _root = NULL;
             _last_elem = _alloc_node.allocate(1);
@@ -102,7 +104,7 @@ namespace   ft
                 insert(*(first++));
         }
         map (const map& x):
-        _size(0), _alloc(x._alloc), _alloc_node(x._alloc_node), _comp(x._comp)
+        _size(0), _alloc(x._alloc), _alloc_node(x._alloc_node), _comp(x._comp), check_existence(0)
         {
             iterator first = x.begin();
             iterator    last = x.end();
@@ -195,7 +197,6 @@ namespace   ft
             ft::pair<iterator,bool> it = this->insert(ft::make_pair(k,mapped_type()));
             iterator    i = it.first;
             return (i->second);
-
         }
 
             /** modifiers   **/
@@ -212,11 +213,21 @@ namespace   ft
                 _last_elem->right = _root;
                 return (ft::make_pair<iterator, bool>(iterator(_root, _last_elem), true));
             }
-            iterator i;
-            if ((i = find(val.first)) != end())
-                return (ft::make_pair<iterator, bool>(i, false));
-            _size++;
-            return ft::make_pair<iterator, bool>(_put(val, _root), true);
+            // iterator i;
+            // if ((i = find(val.first)) != end())
+            //     return (ft::make_pair<iterator, bool>(i, false));
+            // return (ft::make_pair<iterator, bool>(i, true));
+            iterator i = _put(val, _root);
+            if (check_existence == 1)
+            {
+                check_existence = 0;
+                return ft::make_pair<iterator, bool>(i , false);
+            }
+            else
+            {
+                _size++;
+                return ft::make_pair<iterator, bool>(i , true);
+            }
         }
 
     /*
@@ -262,7 +273,7 @@ namespace   ft
                 insert(*first++);
         }
 
-        size_type erase (const key_type& k)
+        /*size_type erase (const key_type& k)
         {
             iterator    i = find(k);
 
@@ -273,10 +284,27 @@ namespace   ft
             _size--;
 
             return (1);
+        }*/
+
+        size_type erase (const key_type& k)
+        {
+            iterator    i = _delete(k, _root);
+
+            if (i._node == _last_elem)
+                return (0);
+            node    *_node = i._node;
+            deleteNode(_node);
+            _size--;
+
+            return (1);
         }
+
         void erase (iterator position)
         {
-            erase(position->first);
+            // erase(position->first);
+            node    *_node = position._node;
+            deleteNode(_node);
+            _size--;
         }
         void erase (iterator first, iterator last)
         {
@@ -313,7 +341,7 @@ namespace   ft
         }
 
             /** operations **/
-        iterator find (const key_type& k)
+        /*iterator find (const key_type& k)
         {
             iterator    i = begin();
             while (i != end())
@@ -323,18 +351,48 @@ namespace   ft
                 ++i;
             }
             return (i);
+        }*/
+
+        iterator find (const key_type& k)
+        {
+            node   *_node = _root;
+            while (_node && _node != _last_elem)
+            {
+                if (!_comp(k, _node->content.first) && !_comp(_node->content.first, k))
+                {
+                    return (iterator(_node, _last_elem));
+                }
+                else if (_comp(k, _node->content.first))
+                {
+                    _node = _node->left;
+                }
+                else
+                {
+                    _node = _node->right;
+                }
+            }
+            return (end());
         }
 
         const_iterator find (const key_type& k) const
         {
-            const_iterator    i = begin();
-            while (i != end())
+            node   *_node = _root;
+            while (_node && _node != _last_elem)
             {
-                if (!_comp(i->first, k) && !_comp(k, i->first)) //use compare
-                    return (i);
-                ++i;
+                if (!_comp(k, _node->content.first) && !_comp(_node->content.first, k))
+                {
+                    return (const_iterator(_node, _last_elem));
+                }
+                else if (_comp(k, _node->content.first))
+                {
+                    _node = _node->left;
+                }
+                else
+                {
+                    _node = _node->right;
+                }
             }
-            return (i);
+            return (end());
         }
         size_type count (const key_type& k) const
         {
@@ -437,10 +495,37 @@ namespace   ft
             _alloc_node.deallocate(_node, 1);
         }
 
+        iterator    _delete(const key_type& val, node *_node)
+        {
+            if (!_node || _node == _last_elem)
+                return (iterator(_last_elem, _last_elem));
+            if (!_comp(val, _node->content.first) && !_comp(_node->content.first, val))
+            {
+                return (iterator(_node, _last_elem));
+            }
+            else if (_comp(val, _node->content.first))
+            {
+                if (!_node->left || _node->left == _last_elem)
+                    return (iterator(_last_elem, _last_elem));
+                return _delete(val, _node->left);
+            }
+            else
+            {
+                if (!_node->left || _node->right == _last_elem)
+                    return (iterator(_last_elem, _last_elem));
+                return _delete(val, _node->right);
+            }
+        }
+
         iterator    _put(const value_type& val, node *_node)
         {
             node    *_new = NULL; //this is the new node we'll insert
 
+            if (!_comp(val.first, _node->content.first) && !_comp(_node->content.first, val.first))
+            {
+                check_existence = 1;
+                return (iterator(_node, _last_elem));
+            }
             if (_comp(val.first, _node->content.first))
             {
                 if (!_node->left)

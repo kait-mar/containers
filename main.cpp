@@ -385,159 +385,72 @@ void testModifiers()
 int main()
 {
 
-    std::cout << "\033[1;37m[-------------------- [" << std::setw(40) << std::left << " insert method (fill) "
-              << "] --------------------]\t\t\033[0m";
-    {
-        /*
-         * strings to store the resutls
-         */
-        std::string str, ft_str;
-        /*
-         * var to store the size and the capacity
-         */
-        ft::vector<std::string>::size_type s, ft_s;
-        ft::vector<std::string>::size_type c, ft_c;
-        /*
-         * bool to store the comparison
-         */
-        bool cond;
+    bool cond(false);
 
-        /*------------------------------- test 1: empty vector ----------------------------------------*/
-        // insert at the begin
+        /* ---------- Testing some edge cases ---------- */
+
+        std::map<int, std::string> m2;
+        ft::map<int, std::string> ft_m2;
+
+        for (size_t i = 0; i < 1200/*1e5*/; i++)
         {
-            std::vector<std::string> v;
-            ft::vector<std::string> ft_v;
-            v.insert(v.begin(), 100, "hello");
-            ft_v.insert(ft_v.begin(), 100, "hello");
-            ft_v.begin()->length();
-
-            s = v.size();
-            ft_s = ft_v.size();
-            c = v.capacity();
-            ft_c = ft_v.capacity();
-            for (size_t i = 0; i < v.size(); ++i)
-                str += v[i];
-            for (size_t i = 0; i < ft_v.size(); ++i)
-                ft_str += ft_v[i];
-            cond = ((str == ft_str) && (s == ft_s) && (c == ft_c));
-            
-        }
-        // insert at the end
-        {
-            std::vector<std::string> v;
-            ft::vector<std::string> ft_v;
-
-            v.insert(v.end(), "hello");
-            ft_v.insert(ft_v.end(), "hello");
-            ft_v.begin()->length();
-
-            str.clear();
-            ft_str.clear();
-
-            s = v.size();
-            ft_s = ft_v.size();
-            c = v.capacity();
-            ft_c = ft_v.capacity();
-            for (size_t i = 0; i < v.size(); ++i)
-                str += v[i];
-            for (size_t i = 0; i < ft_v.size(); ++i)
-                ft_str += ft_v[i];
-            cond = (cond && (str == ft_str) && (s == ft_s) && (c == ft_c));
-        }
-        // /*---------------------------------------------------------------------------------------------------*/
-        // /*------------------------------- test 2: the vector capacity >= size + n ----------------------------------------*/
-        {
-            std::vector<std::string> v(20, "string");
-            ft::vector<std::string> ft_v(20, "string");
-            ft::vector<std::string>::iterator valid_it;
-
-            v.reserve(100);
-            ft_v.reserve(100);
-            valid_it = ft_v.begin();
-            v.insert(v.begin() + 15, 70, "hello");
-            ft_v.insert(ft_v.begin() + 15, 70, "hello");
-
-            str.clear();
-            ft_str.clear();
-            s = v.size();
-            ft_s = ft_v.size();
-            c = v.capacity();
-            ft_c = ft_v.capacity();
-            for (size_t i = 0; i < v.size(); ++i)
-                str += v[i];
-            for (size_t i = 0; i < ft_v.size(); ++i)
-                ft_str += ft_v[i];
-            cond = (cond && (str == ft_str) && (s == ft_s) && (c == ft_c) && (&(*valid_it) == &(*ft_v.begin())));
-        }
-        // /*---------------------------------------------------------------------------------------------------*/
-        // /*------------------------------- test 3: the vector capacity < size + n && n > size ----------------------------------------*/
-        {
-            std::vector<std::string> v(20, "string");
-            ft::vector<std::string> ft_v(20, "string");
-
-            v.insert(v.begin() + 10, 100, "hello");
-            ft_v.insert(ft_v.begin() + 10, 100, "hello");
-
-            str.clear();
-            ft_str.clear();
-            s = v.size();
-            ft_s = ft_v.size();
-            c = v.capacity();
-            ft_c = ft_v.capacity();
-            for (size_t i = 0; i < v.size(); ++i)
-                str += v[i];
-            for (size_t i = 0; i < ft_v.size(); ++i)
-                ft_str += ft_v[i];
-            cond = (cond && (str == ft_str) && (s == ft_s) && (c == ft_c));
-        }
-        // /*---------------------------------------------------------------------------------------------------*/
-        // /*------------------------------- test 4: the vector capacity < size + n && n <= size ----------------------------------------*/
-        {
-            std::vector<std::string> v(20, "string");
-            ft::vector<std::string> ft_v(20, "string");
-
-            v.insert(v.begin() + 10, 15, "hello");
-            ft_v.insert(ft_v.begin() + 10, 15, "hello");
-
-            str.clear();
-            ft_str.clear();
-            s = v.size();
-            ft_s = ft_v.size();
-            c = v.capacity();
-            ft_c = ft_v.capacity();
-            for (size_t i = 0; i < v.size(); ++i)
-                str += v[i];
-            for (size_t i = 0; i < ft_v.size(); ++i)
-                ft_str += ft_v[i];
-            cond = (cond && (str == ft_str) && (s == ft_s) && (c == ft_c));
+            m2.insert(std::make_pair(i, "string1"));
+            ft_m2.insert(ft::make_pair(i, "string1"));
         }
 
+        std::map<int, std::string>::reverse_iterator it2 = m2.rbegin();
+        ft::map<int, std::string>::reverse_iterator ft_it2 = ft_m2.rbegin();
 
+        m2.erase(m2.begin());
+        ft_m2.erase(ft_m2.begin());
 
+        cond = cond && m2.size() == ft_m2.size() && compareMaps(m2.begin(), m2.end(), ft_m2.begin(), ft_m2.end());
+        
+        m2.erase(it2->first);
+        ft_m2.erase(ft_it2->first);
 
-        // /*---------------------------------------------------------------------------------------------------*/
+        cond = cond && m2.size() == ft_m2.size() && compareMaps(m2.begin(), m2.end(), ft_m2.begin(), ft_m2.end());
+        std::cout << cond << std::endl;
+        std::map<int, std::string> m3;
+        ft::map<int, std::string> ft_m3;
+        std::vector<int> vec;
+        std::vector<int> ft_vec;
+        std::random_device randDev;
+        std::mt19937 generator(randDev());
+        std::uniform_int_distribution<int> distr(0, 1e8);
+
+        for (size_t i = 0; i < 12000/*1e6*/; i++)
         {
-            std::vector<std::string> v(20, "string");
-            ft::vector<std::string> ft_v(20, "string");
-
-            v.insert(v.end(), 15, "hello");
-            ft_v.insert(ft_v.end(), 15, "hello");
-
-            str.clear();
-            ft_str.clear();
-            s = v.size();
-            ft_s = ft_v.size();
-            c = v.capacity();
-            ft_c = ft_v.capacity();
-            for (size_t i = 0; i < v.size(); ++i)
-                str += v[i];
-            for (size_t i = 0; i < ft_v.size(); ++i)
-                ft_str += ft_v[i];
-            cond = (cond && (str == ft_str) && (s == ft_s) && (c == ft_c));
+            m3.insert(std::make_pair(i, "string1"));
+            ft_m3.insert(ft::make_pair(i, "string1"));
         }
-        ///////////////////
+
+        for (size_t i = 0; i < 12000/*1e6*/; ++i)
+        {
+            int n = distr(generator);
+            int ret1 = m3.erase(n);
+            int ret2 = ft_m3.erase(n);
+
+            if (ret1 != ret2)
+            {
+                cond = false;
+                break;
+            }
+        }
+
+        if (!m3.empty())
+        {
+            m3.erase(m3.begin(), m3.end());
+            m3.erase(m3.begin(), m3.end());
+        }
+        if (!ft_m3.empty())
+        {
+            ft_m3.erase(ft_m3.begin(), ft_m3.end());
+            ft_m3.erase(ft_m3.begin(), ft_m3.end());
+        }
+        cond = cond && (m3.size() == ft_m3.size() && compareMaps(m3.begin(), m3.end(), ft_m3.begin(), ft_m3.end()));
+
         EQUAL(cond);
-    }
 
     return 0;
 }
