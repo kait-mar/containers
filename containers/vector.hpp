@@ -185,6 +185,15 @@ namespace   ft
         }
 
         // (2^64)/sizeof(dataType) - 1 ||  2^(64-sizeof(type))-1
+        // return std::numeric_limits<difference_type>::max() / sizeof(T);
+        // return std::numeric_limits<difference_type>::max() / sizeof(value_type);
+        // return (std::numeric_limits<size_type>::max() / (sizeof(ft::BNode<key_type, mapped_type>)));
+        //  size_type       max_size() const
+        //     {
+        //         if (sizeof(value_type) == 1)
+        //             return static_cast<size_type>(pow(2.0, 64.0) / 2.0) - 1;
+        //         return static_cast<size_type>(pow(2.0, 64.0) / static_cast<double>(sizeof(value_type))) - 1;
+        //     }
         size_type       max_size() const 
         {
             unsigned long res;

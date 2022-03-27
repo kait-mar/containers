@@ -1,7 +1,7 @@
 #ifndef SUPPORT_HPP
 #define SUPPORT_HPP
 #include "../iterators/vector_iterators.hpp"
-
+#include <cstddef>
 
 namespace   ft
 {

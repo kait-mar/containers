@@ -181,7 +181,7 @@ namespace   ft
         /**     capacity    **/
         size_t  size() const {return (_size);}
         bool    empty() const {return (_size == 0);}
-        // size_type max_size() const;
+        size_type max_size() const {return (_alloc.max_size());}
 
         /** element access  **/
         mapped_type& operator[] (const key_type& k)
