@@ -194,17 +194,18 @@ namespace   ft
         //             return static_cast<size_type>(pow(2.0, 64.0) / 2.0) - 1;
         //         return static_cast<size_type>(pow(2.0, 64.0) / static_cast<double>(sizeof(value_type))) - 1;
         //     }
-        size_type       max_size() const 
-        {
-            unsigned long res;
-            if (sizeof(value_type) != 1)
-            {
-                res = pow(2.0, 64.0) / sizeof(value_type) - 1;
-                return res;
-                // return static_cast<size_type>(pow(2.0, 64.0) / sizeof(value_type) - 1);
-            }
-            return static_cast<size_type>(pow(2.0, 64.0 - 1)) - 1;
-        }
+         size_type       max_size() const { return _alloc.max_size();}
+        // size_type       max_size() const 
+        // {
+        //     unsigned long res;
+        //     if (sizeof(value_type) != 1)
+        //     {
+        //         res = pow(2.0, 64.0) / sizeof(value_type) - 1;
+        //         return res;
+        //         // return static_cast<size_type>(pow(2.0, 64.0) / sizeof(value_type) - 1);
+        //     }
+        //     return static_cast<size_type>(pow(2.0, 64.0 - 1)) - 1;
+        // }
         size_type capacity() const
         {
             return (_capacity);

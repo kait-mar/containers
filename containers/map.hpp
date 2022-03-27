@@ -511,7 +511,7 @@ namespace   ft
             }
             else
             {
-                if (!_node->left || _node->right == _last_elem)
+                if (!_node->right || _node->right == _last_elem)
                     return (iterator(_last_elem, _last_elem));
                 return _delete(val, _node->right);
             }

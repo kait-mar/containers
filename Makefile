@@ -1,8 +1,8 @@
 NAME= ft_containers
 
-CC= g++ -g
+CC= clang++ -g
 
-FLAGS= -Wall -Wextra -Werror 
+FLAGS= -Wall -Wextra -Werror --std=c++98 -fsanitize=address -g3
 
 SRCS=   main.cpp
 

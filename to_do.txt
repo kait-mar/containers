@@ -11,3 +11,4 @@ Friend keyword should only be used for operator overload.
 The underlying container must be protected and not private!
 max_size function
 check the erase range methd and its TLE
+keep the implementation of erase with the new Find
