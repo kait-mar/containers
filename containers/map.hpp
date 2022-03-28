@@ -273,7 +273,7 @@ namespace   ft
                 insert(*first++);
         }
 
-        /*size_type erase (const key_type& k)
+        size_type erase (const key_type& k)
         {
             iterator    i = find(k);
 
@@ -284,9 +284,9 @@ namespace   ft
             _size--;
 
             return (1);
-        }*/
+        }
 
-        size_type erase (const key_type& k)
+        /*size_type erase (const key_type& k)
         {
             iterator    i = _delete(k, _root);
 
@@ -297,7 +297,7 @@ namespace   ft
             _size--;
 
             return (1);
-        }
+        }*/
 
         void erase (iterator position)
         {
@@ -317,17 +317,40 @@ namespace   ft
         /*
             Removes all elements from the map container
         */
+        // void clear()
+        // {
+        //     iterator j, i;
+        //     if (_root == NULL)
+        //         return ;
+        //     i = begin();
+        //     while (i != end())
+        //      {
+        //         j = i++;
+        //         erase(j);
+        //      }
+        // }
+
         void clear()
         {
             iterator j, i;
+            node    *_node;
             if (_root == NULL)
                 return ;
             i = begin();
             while (i != end())
-             {
+            {
                 j = i++;
-                erase(j);
-             }
+                _node = i._node;
+                if (j._node == _node->parent)
+                    _node->parent = j._node->parent;
+                _node->left = _last_elem;
+                _last_elem->right = _node;
+                _size--;
+                deallocate_node(j._node);
+            }
+            _root = _last_elem;
+            _last_elem->left = _root;
+            _last_elem->right = _root;
         }
 
         /*
