@@ -302,6 +302,7 @@ namespace   ft
         void erase (iterator position)
         {
             // erase(position->first);
+            // std::cout << position->first << std::endl;
             node    *_node = position._node;
             deleteNode(_node);
             _size--;
@@ -310,6 +311,7 @@ namespace   ft
         {
             while (first != last)
             {
+                // std::cout << first->first << std::endl;
                 erase(first++);
             }
         }
@@ -340,12 +342,28 @@ namespace   ft
             while (i != end())
             {
                 j = i++;
+                // std::cout << "j = " << j->first << " | i = " << i->first << std::endl;
                 _node = i._node;
                 if (j._node == _node->parent)
+                {
                     _node->parent = j._node->parent;
+                    if (_node->parent && _node->parent->left == j._node)
+                        _node->parent->left = _node;
+                    else if (_node->parent && _node->parent->right == j._node)
+                        _node->parent->right = _node;
+                }
                 _node->left = _last_elem;
                 _last_elem->right = _node;
                 _size--;
+                if (j._node->right)
+                {
+                    j._node->right->parent = j._node->parent;
+                    if (j._node->parent && j._node->parent->left == j._node)
+                        j._node->parent->left = j._node->right;
+                    else if (j._node->parent && j._node->parent->right == j._node)
+                        j._node->parent->right = j._node->right;
+                }
+                    
                 deallocate_node(j._node);
             }
             _root = _last_elem;
@@ -353,6 +371,7 @@ namespace   ft
             _last_elem->right = _root;
         }
 
+        
         /*
             Exchanges the content of the container by the content of x, which is another map of the same type. Sizes may differ.
         */
@@ -427,7 +446,11 @@ namespace   ft
 
          iterator upper_bound(const key_type& k)
         {
-            iterator i = begin();
+            iterator i;
+            // if (_comp(_root->content.first, k))
+            //     i = iterator(_root, _last_elem);
+            // else
+                i = begin();
 
             while (i != end())
             {
@@ -439,7 +462,11 @@ namespace   ft
         }
         const_iterator upper_bound(const key_type& k) const
         {
-            const_iterator i = begin();
+            iterator i;
+            if (_comp(_root->content.first, k))
+                i = iterator(_root, _last_elem);
+            else
+                i = begin();
 
             while (i != end())
             {
@@ -451,7 +478,11 @@ namespace   ft
         }
         iterator lower_bound(const key_type& k)
         {
-            iterator i = begin();
+            iterator i;
+            // if (_comp(_root->content.first, k))
+            //     i = iterator(_root, _last_elem);
+            // else
+                i = begin();
 
             while  (i != end())
             {
@@ -463,7 +494,11 @@ namespace   ft
         }
         const_iterator lower_bound(const key_type& k) const
         {
-            const_iterator i = begin();
+            iterator i;
+            if (_comp(_root->content.first, k))
+                i = iterator(_root, _last_elem);
+            else
+                i = begin();
 
             while  (i != end())
             {
@@ -732,6 +767,8 @@ namespace   ft
             {
                 tmp = minNode(_node->right);
                 node    *_temp = tmp->parent;
+                /*if (_temp == _node)
+                    _temp = tmp;*/ //add this later
                 node    *replace = construct_node(tmp, _node->parent);
                 deleteNode2(tmp);
                 if (_node->parent && _node->parent->left == _node)
@@ -745,6 +782,8 @@ namespace   ft
                 if (_node->right)
                     _node->right->parent = replace;
                 //deleteNode(_node);
+                std::cout << "_node = " << _node->content.first << std::endl;
+                std::cout << "_temp = " << _temp->content.first << std::endl;
                 deallocate_node(_node);
                 update_balance(_temp);
             }
