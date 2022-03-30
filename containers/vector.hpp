@@ -734,48 +734,44 @@ namespace   ft
         {
             return(this->array[this->_size - 1]);
         }
+        
+        /*
+            relational operators
+        */
+        friend bool operator== (const ft::vector<T,Alloc>& lhs, const ft::vector<T,Alloc>& rhs)
+        {
+            if (lhs.size() != rhs.size())
+                return (false);
+            return (ft::equal(lhs.begin(), lhs.end(), rhs.begin()));
+        }
+        friend bool operator!= (const ft::vector<T,Alloc>& lhs, const ft::vector<T,Alloc>& rhs)
+        {
+            return (!operator==(lhs, rhs));
+        }
+        friend  bool operator< (const ft::vector<T,Alloc>& lhs, const ft::vector<T,Alloc>& rhs)
+        {
+            return (ft::lexicographical_compare(lhs.begin(), lhs.end(), rhs.begin(), rhs.end()));
+        }
+        friend  bool operator> (const ft::vector<T,Alloc>& lhs, const ft::vector<T,Alloc>& rhs)
+        {
+            return (operator<(rhs, lhs));
+        }
+        friend  bool operator<= (const ft::vector<T,Alloc>& lhs, const ft::vector<T,Alloc>& rhs)
+        {
+            return (!operator>(lhs, rhs));
+        }
+        friend  bool operator>= (const ft::vector<T,Alloc>& lhs, const ft::vector<T,Alloc>& rhs)
+        {
+            return (!operator<(lhs, rhs));
+        }
     };
 };
+
     /***** non member function overload  ******/
     template <class T, class Alloc>
     void swap (ft::vector<T,Alloc>& x, ft::vector<T,Alloc>& y)
     {
         x.swap(y);
-    }
-    /*
-        relational operators
-    */
-    template <class T, class Alloc>
-    bool operator== (const ft::vector<T,Alloc>& lhs, const ft::vector<T,Alloc>& rhs)
-    {
-        if (lhs.size() != rhs.size())
-            return (false);
-        return (ft::equal(lhs.begin(), lhs.end(), rhs.begin()));
-    }
-    template <class T, class Alloc>
-    bool operator!= (const ft::vector<T,Alloc>& lhs, const ft::vector<T,Alloc>& rhs)
-    {
-        return (!operator==(lhs, rhs));
-    }
-    template <class T, class Alloc>
-    bool operator< (const ft::vector<T,Alloc>& lhs, const ft::vector<T,Alloc>& rhs)
-    {
-        return (ft::lexicographical_compare(lhs.begin(), lhs.end(), rhs.begin(), rhs.end()));
-    }
-    template <class T, class Alloc>
-    bool operator> (const ft::vector<T,Alloc>& lhs, const ft::vector<T,Alloc>& rhs)
-    {
-        return (operator<(rhs, lhs));
-    }
-    template <class T, class Alloc>
-    bool operator<= (const ft::vector<T,Alloc>& lhs, const ft::vector<T,Alloc>& rhs)
-    {
-        return (!operator>(lhs, rhs));
-    }
-    template <class T, class Alloc>
-    bool operator>= (const ft::vector<T,Alloc>& lhs, const ft::vector<T,Alloc>& rhs)
-    {
-        return (!operator<(lhs, rhs));
     }
 
 

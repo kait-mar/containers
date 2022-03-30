@@ -1,7 +1,6 @@
 
 add operator[] to vector_iterator
 add all the iterator traits struct
-a valid way for declaring the operators is inside the namespace
 coments in map tester : testMapConstructors()
 coments in void testElementAccess()
 *** in void testModifiers()
@@ -13,3 +12,4 @@ max_size function
 check the erase range methd and its TLE
 keep the implementation of erase with the new Find
 test max_size of map
+check that swap vector is correct

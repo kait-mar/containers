@@ -1,192 +1,116 @@
-#include "containers/vector.hpp"
-#include "containers/map.hpp"
-#include <random>
-#include <iomanip>
-#include <sys/time.h>
-#define EQUAL(x) ((x) ? (std::cout << "\033[1;32mAC\033[0m\n") : (std::cout << "\033[1;31mWA\033[0m\n"))
-#define TIME_FAC 20
+#include <iostream>
+#include <string>
+#include <deque>
+#if 1 //CREATE A REAL STL EXAMPLE
+	#include <map>
+	#include <stack>
+	#include <vector>
+	namespace ft = std;
+#else
+	#include <map.hpp>
+	#include <stack.hpp>
+	#include <vector.hpp>
+#endif
 
+#include <stdlib.h>
 
-#include <utility>
-#include <ctime>
-#include <iomanip>
-#include <unistd.h>
-#include <signal.h>
-#include <sys/time.h>
-#include <random>
-
-#define BLUE "\e[0;34m"
-#define RED "\e[0;31m"
-#define GREEN "\e[0;32m"
-#define YELLOW "\e[1;33m"
-#define RESET "\e[0m"
-
-
-template <typename Iter1, typename Iter2>
-bool compareMaps(Iter1 first1, Iter1 last1, Iter2 first2, Iter2 last2)
+#define MAX_RAM 4294967296
+#define BUFFER_SIZE 4096
+struct Buffer
 {
-    std::cout << "begin\n";
-    for (; (first1 != last1) && (first2 != last2); ++first1, ++first2)
-        if (first1->first != first2->first || first1->second != first2->second)
-        {
-            std::cout << first1->first << " | " << first2->first << std::endl;
-            return false;
-        }
-    std::cout << "end\n";  
-    return true;
-}
+	int idx;
+	char buff[BUFFER_SIZE];
+};
 
 
-time_t get_time(void)
+#define COUNT (MAX_RAM / (int)sizeof(Buffer))
+
+template<typename T>
+class MutantStack : public ft::stack<T>
 {
-    struct timeval time_now;
+public:
+	MutantStack() {}
+	MutantStack(const MutantStack<T>& src) { *this = src; }
+	MutantStack<T>& operator=(const MutantStack<T>& rhs) 
+	{
+		this->c = rhs.c;
+		return *this;
+	}
+	~MutantStack() {}
 
-    gettimeofday(&time_now, NULL);
-    time_t msecs_time = (time_now.tv_sec * 1e3) + (time_now.tv_usec / 1e3);
-    return (msecs_time);
-}
+	typedef typename ft::stack<T>::container_type::iterator iterator;
 
-int main()
-{
- bool cond(false);
-        // erasing all the elements in the map;
-        // {
-        //     time_t start, end, diff;
-        //     /*------------------ std::maps ---------------------*/
-        //     std::map<int, std::string> m1;
-        //     ft::map<int, std::string> ft_m1;
-        //     for (size_t i = 0; i < 10/*1e6*/; i++)
-        //     {
-        //         m1.insert(std::make_pair(i, "string2"));
-        //         ft_m1.insert(ft::make_pair(i, "string2"));
-        //     }
+	iterator begin() { return this->c.begin(); }
+	iterator end() { return this->c.end(); }
+};
 
-        //     start = get_time();
-        //     m1.erase(m1.begin(), m1.end());
-        //     end = get_time();
-        //     diff = end - start;
-        //     diff = (diff) ? (diff * TIME_FAC) : TIME_FAC;
-        //     /*-----------------------------------------------------*/
-        //     /*------------------ ft::maps ---------------------*/
-        //     ualarm(diff * 1e3, 0);
-        //     ft_m1.erase(ft_m1.begin(), ft_m1.end());
-        //     ualarm(0, 0);
-        //     /*----------------------------------------------------*/
-        // }
-        std::map<char, int> m;
-        ft::map<char, int> ft_m;
-        std::map<char, int>::iterator it;
-        ft::map<char, int>::iterator ft_it;
+int main(int argc, char** argv) {
+	if (argc != 2)
+	{
+		std::cerr << "Usage: ./test seed" << std::endl;
+		std::cerr << "Provide a seed please" << std::endl;
+		std::cerr << "Count value:" << COUNT << std::endl;
+		return 1;
+	}
+	const int seed = atoi(argv[1]);
+	srand(seed);
 
-        // insert some values:
-        // ft_m['a'] = 10;
-        // ft_m['b'] = 20;
-        // ft_m['c'] = 30;
-        // ft_m['d'] = 40;
-        // ft_m['e'] = 50;
-        // ft_m['f'] = 60;
+	ft::vector<std::string> vector_str;
+	ft::vector<int> vector_int;
+	ft::stack<int> stack_int;
+	ft::vector<Buffer> vector_buffer;
+	ft::stack<Buffer, std::deque<Buffer> > stack_deq_buffer;
+	ft::map<int, int> map_int;
 
-        // m['a'] = 10;
-        // m['b'] = 20;
-        // m['c'] = 30;
-        // m['d'] = 40;
-        // m['e'] = 50;
-        // m['f'] = 60;
-         for (char i = 'a'; i < 'j'/*1e6*/; i++)
-            {
-                m.insert(std::make_pair(i, 5));
-                ft_m.insert(ft::make_pair(i, 5));
-            }
-        cond = m.size() == ft_m.size() && compareMaps(m.begin(), m.end(), ft_m.begin(), ft_m.end());
+	for (int i = 0; i < COUNT; i++)
+	{
+		vector_buffer.push_back(Buffer());
+	}
 
-        it = m.find('b');
-        ft_it = ft_m.find('b');
+	for (int i = 0; i < COUNT; i++)
+	{
+		const int idx = rand() % COUNT;
+		vector_buffer[idx].idx = 5;
+	}
+	ft::vector<Buffer>().swap(vector_buffer);
 
-        cond = cond && (it->first == ft_it->first) && (it->second == ft_it->second);
-        m.erase(it);       // erasing by iterator
-        ft_m.erase(ft_it); // erasing by iterator
+	try
+	{
+		for (int i = 0; i < COUNT; i++)
+		{
+			const int idx = rand() % COUNT;
+			vector_buffer.at(idx);
+			std::cerr << "Error: THIS VECTOR SHOULD BE EMPTY!!" <<std::endl;
+		}
+	}
+	catch(const std::exception& e)
+	{
+		//NORMAL ! :P
+	}
+	
+	for (int i = 0; i < COUNT; ++i)
+	{
+		map_int.insert(ft::make_pair(rand(), rand()));
+	}
 
-        cond = cond && compareMaps(m.begin(), m.end(), ft_m.begin(), ft_m.end());
+	int sum = 0;
+	for (int i = 0; i < 10000; i++)
+	{
+		int access = rand();
+		sum += map_int[access];
+	}
+	std::cout << "should be constant with the same seed: " << sum << std::endl;
 
-        int ret = m.erase('c');       // erasing by key
-        int ft_ret = ft_m.erase('c'); // erasing by key
-
-        cond = cond && ret == ft_ret && compareMaps(m.begin(), m.end(), ft_m.begin(), ft_m.end());
-
-        it = m.find('e');
-        ft_it = ft_m.find('e');
-
-        cond = cond && (it->first == ft_it->first) && (it->second == ft_it->second) && m.size() == ft_m.size();
-
-        m.erase(it, m.end());          // erasing by range
-        ft_m.erase(ft_it, ft_m.end()); // erasing by range
-
-        cond = cond && m.empty() == ft_m.empty() && compareMaps(m.begin(), m.end(), ft_m.begin(), ft_m.end());
-
-        /* ---------- Testing some edge cases ---------- */
-
-        std::map<int, std::string> m2;
-        ft::map<int, std::string> ft_m2;
-
-        for (size_t i = 0; i < 12000/*1e5*/; i++)
-        {
-            m2.insert(std::make_pair(i, "string1"));
-            ft_m2.insert(ft::make_pair(i, "string1"));
-        }
-
-        std::map<int, std::string>::reverse_iterator it2 = m2.rbegin();
-        ft::map<int, std::string>::reverse_iterator ft_it2 = ft_m2.rbegin();
-
-        m2.erase(m2.begin());
-        ft_m2.erase(ft_m2.begin());
-
-        cond = cond && m2.size() == ft_m2.size() && compareMaps(m2.begin(), m2.end(), ft_m2.begin(), ft_m2.end());
-
-        m2.erase(it2->first);
-        ft_m2.erase(ft_it2->first);
-
-        cond = cond && m2.size() == ft_m2.size() && compareMaps(m2.begin(), m2.end(), ft_m2.begin(), ft_m2.end());
-
-        std::map<int, std::string> m3;
-        ft::map<int, std::string> ft_m3;
-        std::vector<int> vec;
-        std::vector<int> ft_vec;
-        std::random_device randDev;
-        std::mt19937 generator(randDev());
-        std::uniform_int_distribution<int> distr(0, 1e8);
-
-        for (size_t i = 0; i < 12000/*1e6*/; i++)
-        {
-            m3.insert(std::make_pair(i, "string1"));
-            ft_m3.insert(ft::make_pair(i, "string1"));
-        }
-
-        for (size_t i = 0; i < 12000/*1e6*/; ++i)
-        {
-            int n = distr(generator);
-            int ret1 = m3.erase(n);
-            int ret2 = ft_m3.erase(n);
-
-            if (ret1 != ret2)
-            {
-                cond = false;
-                break;
-            }
-        }
-
-        if (!m3.empty())
-        {
-            m3.erase(m3.begin(), m3.end());
-            m3.erase(m3.begin(), m3.end());
-        }
-        if (!ft_m3.empty())
-        {
-            ft_m3.erase(ft_m3.begin(), ft_m3.end());
-            ft_m3.erase(ft_m3.begin(), ft_m3.end());
-        }
-        cond = cond && (m3.size() == ft_m3.size() && compareMaps(m3.begin(), m3.end(), ft_m3.begin(), ft_m3.end()));
-
-        EQUAL(cond);
-
-    return 0;
+	{
+		ft::map<int, int> copy = map_int;
+	}
+	MutantStack<char> iterable_stack;
+	for (char letter = 'a'; letter <= 'z'; letter++)
+		iterable_stack.push(letter);
+	for (MutantStack<char>::iterator it = iterable_stack.begin(); it != iterable_stack.end(); it++)
+	{
+		std::cout << *it;
+	}
+	std::cout << std::endl;
+	return (0);
 }

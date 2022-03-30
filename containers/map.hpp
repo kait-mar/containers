@@ -48,7 +48,7 @@ namespace   ft
         typedef typename allocator_type::const_pointer              const_pointer;
         typedef ptrdiff_t                                           difference_type;
         typedef size_t                                              size_type;
-        typedef std::allocator<node>                                allocator_node;
+        typedef typename Alloc::template rebind<node>::other                                allocator_node;
 
         // in C++98, it is required to inherit binary_function<value_type,value_type,bool>
 		class value_compare : std::binary_function<value_type, value_type, bool>
@@ -157,23 +157,19 @@ namespace   ft
             return (const_iterator(_last_elem, _last_elem));
         }
         reverse_iterator rbegin()
-        { 
-            // return reverse_iterator(iterator(_last_elem->left, _last_elem));
+        {
             return reverse_iterator(iterator(_last_elem, _last_elem));
         }
         const_reverse_iterator rbegin() const
         { 
-            // return const_reverse_iterator(iterator(_last_elem->left, _last_elem));
             return const_reverse_iterator(iterator(_last_elem, _last_elem));
         }
         reverse_iterator rend()
         {
-            // return reverse_iterator(iterator(_last_elem, _last_elem));
             return reverse_iterator(iterator(_last_elem->right, _last_elem));
         }
         const_reverse_iterator rend() const
         {
-            // return const_reverse_iterator(iterator(_last_elem, _last_elem));
             return const_reverse_iterator(iterator(_last_elem->right, _last_elem));
         }
 
@@ -186,14 +182,6 @@ namespace   ft
         /** element access  **/
         mapped_type& operator[] (const key_type& k)
         {
-            // iterator    i;
-            // if ((i = find(k)) != end())
-            //     return (i->second);
-            // T m = T();
-            // const value_type  _new(k, m);
-            // return const_cast<int&>(insert(_new).first->first);
-            
-            // return (*((this->insert(ft::make_pair(k,mapped_type()))).first)).second;
             ft::pair<iterator,bool> it = this->insert(ft::make_pair(k,mapped_type()));
             iterator    i = it.first;
             return (i->second);
@@ -213,10 +201,6 @@ namespace   ft
                 _last_elem->right = _root;
                 return (ft::make_pair<iterator, bool>(iterator(_root, _last_elem), true));
             }
-            // iterator i;
-            // if ((i = find(val.first)) != end())
-            //     return (ft::make_pair<iterator, bool>(i, false));
-            // return (ft::make_pair<iterator, bool>(i, true));
             iterator i = _put(val, _root);
             if (check_existence == 1)
             {
@@ -235,7 +219,6 @@ namespace   ft
     */
         iterator insert (iterator position, const value_type& val)
         {
-            //how to know if it precede or not !!
             iterator    check;
 
             if ((check = find(val.first)) != end())
@@ -264,11 +247,8 @@ namespace   ft
         }
 
         template <class InputIterator>
-        void insert (InputIterator first, InputIterator last
-                    /*, typename ft::enable_if<!ft::is_integral<InputIterator>::value >::type* = 0*/)
+        void insert (InputIterator first, InputIterator last)
         {
-            //enable if is not a value type
-            //try to remove the enable if !!!!!!!!!!!!!
             while (first != last)
                 insert(*first++);
         }
@@ -301,8 +281,6 @@ namespace   ft
 
         void erase (iterator position)
         {
-            // erase(position->first);
-            // std::cout << position->first << std::endl;
             node    *_node = position._node;
             deleteNode(_node);
             _size--;
@@ -311,7 +289,6 @@ namespace   ft
         {
             while (first != last)
             {
-                // std::cout << first->first << std::endl;
                 erase(first++);
             }
         }
@@ -342,7 +319,6 @@ namespace   ft
             while (i != end())
             {
                 j = i++;
-                // std::cout << "j = " << j->first << " | i = " << i->first << std::endl;
                 _node = i._node;
                 if (j._node == _node->parent)
                 {
@@ -375,25 +351,26 @@ namespace   ft
         /*
             Exchanges the content of the container by the content of x, which is another map of the same type. Sizes may differ.
         */
+
         void swap (map& x)
         {
-            map temp1(begin(), end());
-            this->operator=(x);
-            x = temp1;
+            node    *_root_replace = _root;
+            node    *_last_replace = _last_elem;
+            size_type   _size_replace = _size;
+            key_compare _comp_replace = _comp;
+
+            _root = x._root;
+            _last_elem = x._last_elem;
+            _size = x._size;
+            _comp = x._comp;
+
+            x._root = _root_replace;
+            x._last_elem = _last_replace;
+            x._size = _size_replace;
+            x._comp = _comp_replace;
         }
 
             /** operations **/
-        /*iterator find (const key_type& k)
-        {
-            iterator    i = begin();
-            while (i != end())
-            {
-                if (!_comp(i->first, k) && !_comp(k, i->first)) //use compare
-                    return (i);
-                ++i;
-            }
-            return (i);
-        }*/
 
         iterator find (const key_type& k)
         {
@@ -446,11 +423,7 @@ namespace   ft
 
          iterator upper_bound(const key_type& k)
         {
-            iterator i;
-            // if (_comp(_root->content.first, k))
-            //     i = iterator(_root, _last_elem);
-            // else
-                i = begin();
+            iterator i = begin();
 
             while (i != end())
             {
@@ -478,11 +451,7 @@ namespace   ft
         }
         iterator lower_bound(const key_type& k)
         {
-            iterator i;
-            // if (_comp(_root->content.first, k))
-            //     i = iterator(_root, _last_elem);
-            // else
-                i = begin();
+            iterator i = begin();
 
             while  (i != end())
             {
@@ -637,7 +606,6 @@ namespace   ft
             if (_node == _root && _size == 1)
             {
                 _root = _last_elem;
-                // _root = NULL;
                 _last_elem->left = _root;
                 _last_elem->right = _root;
                 deallocate_node(_node);
@@ -701,7 +669,6 @@ namespace   ft
                 if (_node->left == _last_elem)
                 {
                     //the last node will always be in left of her parent
-                    // _node->parent->left = _last_elem;
                     if (_node->right)
                     {
                         _node->parent->left = _node->right;
@@ -717,7 +684,6 @@ namespace   ft
                 }
                 else
                 {
-                    // _node->parent->right = _last_elem;
                     if (_node->left)
                     {
                         _node->parent->right = _node->left;
@@ -743,7 +709,6 @@ namespace   ft
                 else
                 {
                     tmp = NULL;
-                    //_node = NULL;
                 }
                 if (tmp)
                     tmp->parent = _node->parent;
@@ -752,24 +717,16 @@ namespace   ft
                 else                              /*is right*/
                     _node->parent->right = tmp;
                 deallocate_node(_node);
-                /*_node->parent = tmp->parent;
-                if (tmp->parent->left == tmp)
-                    tmp->parent->left = _node;
-                else
-                    tmp->parent->right = _node;
-                _node->content = tmp->content;
-                _node->right = tmp->right;
-                _node->left = tmp->left;
-                deallocate_node(tmp);*/
-                update_balance(tmp);
+                if (tmp)
+                    update_balance(tmp);
             }
             else
             {
                 tmp = minNode(_node->right);
                 node    *_temp = tmp->parent;
-                /*if (_temp == _node)
-                    _temp = tmp;*/ //add this later
                 node    *replace = construct_node(tmp, _node->parent);
+                if (_temp == _node)
+                    _temp = replace; //add this later
                 deleteNode2(tmp);
                 if (_node->parent && _node->parent->left == _node)
                     _node->parent->left = replace;
@@ -781,9 +738,6 @@ namespace   ft
                     _node->left->parent = replace;
                 if (_node->right)
                     _node->right->parent = replace;
-                //deleteNode(_node);
-                std::cout << "_node = " << _node->content.first << std::endl;
-                std::cout << "_temp = " << _temp->content.first << std::endl;
                 deallocate_node(_node);
                 update_balance(_temp);
             }
@@ -800,7 +754,6 @@ namespace   ft
             {
                 tmp = _node->parent;
                 _node->parent->right = _last_elem;
-                //_last_elem->left = _node->parent;
                 deallocate_node(_node);
                 update_balance(tmp);
             }
@@ -824,15 +777,6 @@ namespace   ft
                 else                              /*is right*/
                     _node->parent->right = tmp;
                 deallocate_node(_node);
-                /*_node->parent = tmp->parent;
-                if (tmp->parent->left == tmp)
-                    tmp->parent->left = _node;
-                else
-                    tmp->parent->right = _node;
-                _node->content = tmp->content;
-                _node->right = tmp->right;
-                _node->left = tmp->left;
-                deallocate_node(tmp);*/
                 if (tmp)
                     update_balance(tmp);
                 else if (temp2)
@@ -859,7 +803,6 @@ namespace   ft
 
         void    update_balance(node *_node)
         {
-            //if (_node->balance_factor > 1 || _node->balance_factor < -1)
             if (balance_factor(_node) > 1 || balance_factor(_node) < -1)
             {
                 rebalance(_node);
@@ -871,7 +814,6 @@ namespace   ft
                     _node->parent->balance_factor++;
                 else if (_node->parent->right == _node)
                     _node->parent->balance_factor--;
-                // if (_node->parent->balance_factor != 0)
                 if (balance_factor(_node->parent) != 0)
                     update_balance(_node->parent);
             }
@@ -879,7 +821,6 @@ namespace   ft
 
         void    rebalance(node *_node)
         {
-            // if (_node->balance_factor < 0 && _node->right)
             if (balance_factor(_node) < 0 && _node->right)
             {
                 if (balance_factor(_node->right) > 0)
@@ -902,11 +843,11 @@ namespace   ft
             }
         }
 
-        void    rotate_left(node *_node)  //don't yu need to update the is_right/left of nodes ?
+        void    rotate_left(node *_node) 
         {
             node    *new_root = _node->right;
             _node->right = new_root->left;
-            if (new_root->left /*this has just been added*/ && new_root->left != _last_elem)
+            if (new_root->left  && new_root->left != _last_elem)
                 new_root->left->parent = _node;
             new_root->parent = _node->parent;
             if (!_node->parent)
@@ -924,11 +865,11 @@ namespace   ft
             new_root->balance_factor = new_root->balance_factor + 1 + std::max(_node->balance_factor, 0);
         }
 
-        void    rotate_right(node *_node) //don't yu need to update the is_right/left of nodes ?
+        void    rotate_right(node *_node)
         {
             node    *new_root = _node->left;
             _node->left = new_root->right;
-            if (new_root->right /*this has just been added*/ && new_root->right != _last_elem)
+            if (new_root->right && new_root->right != _last_elem)
                 new_root->right->parent = _node;
             new_root->parent = _node->parent;
             if (!_node->parent)
@@ -944,7 +885,6 @@ namespace   ft
             _node->parent = new_root;
             _node->balance_factor = _node->balance_factor + 1 - std::min(new_root->balance_factor, 0);
             new_root->balance_factor = new_root->balance_factor + 1 + std::max(_node->balance_factor, 0);
-            //_node->left = NULL; /*this has just been added and could be wrong*/
         }
 
         node    *minNode(node *_node)
@@ -960,6 +900,39 @@ namespace   ft
                 return (0);
             return (1 + std::max(height(_node->left), height(_node->right)));
         }
+    public:
+        friend bool operator==( const ft::map<Key,T,Compare,Alloc>& lhs,
+                const ft::map<Key,T,Compare,Alloc>& rhs )
+        {
+            if (lhs.size() != rhs.size())
+                return (false);
+            return (ft::equal(lhs.begin(), lhs.end(), rhs.begin()));
+        }
+        friend bool operator!= ( const ft::map<Key,T,Compare,Alloc>& lhs,
+                    const ft::map<Key,T,Compare,Alloc>& rhs )
+        {
+            return (!operator==(lhs, rhs));
+        }
+        friend bool operator< ( const ft::map<Key,T,Compare,Alloc>& lhs,
+                    const ft::map<Key,T,Compare,Alloc>& rhs )
+        {
+            return (ft::lexicographical_compare(lhs.begin(), lhs.end(), rhs.begin(), rhs.end()));
+        }
+        friend bool operator> ( const ft::map<Key,T,Compare,Alloc>& lhs,
+                    const ft::map<Key,T,Compare,Alloc>& rhs )
+        {
+            return (operator<(rhs, lhs));
+        }
+        friend bool operator<= ( const ft::map<Key,T,Compare,Alloc>& lhs,
+                    const ft::map<Key,T,Compare,Alloc>& rhs )
+        {
+            return (!operator>(lhs, rhs));
+        }
+        friend bool operator>= ( const ft::map<Key,T,Compare,Alloc>& lhs,
+                    const ft::map<Key,T,Compare,Alloc>& rhs )
+        {
+            return (!operator<(lhs, rhs));
+        }
     };
 }
 
@@ -969,52 +942,4 @@ template <class Key, class T, class Compare, class Alloc>
     x.swap(y);
 }
 
-template< class Key, class T, class Compare, class Alloc >
-bool operator==( const ft::map<Key,T,Compare,Alloc>& lhs,
-                const ft::map<Key,T,Compare,Alloc>& rhs )
-{
-    if (lhs.size() != rhs.size())
-        return (false);
-    return (ft::equal(lhs.begin(), lhs.end(), rhs.begin()));
-}
-template <class Key, class T, class Compare, class Alloc>
-bool operator!= ( const ft::map<Key,T,Compare,Alloc>& lhs,
-                    const ft::map<Key,T,Compare,Alloc>& rhs )
-{
-    return (!operator==(lhs, rhs));
-}
-
-template <class Key, class T, class Compare, class Alloc>
-bool operator< ( const ft::map<Key,T,Compare,Alloc>& lhs,
-                    const ft::map<Key,T,Compare,Alloc>& rhs )
-{
-    return (ft::lexicographical_compare(lhs.begin(), lhs.end(), rhs.begin(), rhs.end()));
-}
-
-template <class Key, class T, class Compare, class Alloc>
-bool operator> ( const ft::map<Key,T,Compare,Alloc>& lhs,
-                    const ft::map<Key,T,Compare,Alloc>& rhs )
-{
-    return (operator<(rhs, lhs));
-}
-
-template <class Key, class T, class Compare, class Alloc>
-bool operator<= ( const ft::map<Key,T,Compare,Alloc>& lhs,
-                    const ft::map<Key,T,Compare,Alloc>& rhs )
-{
-    return (!operator>(lhs, rhs));
-}
-
-template <class Key, class T, class Compare, class Alloc>
-bool operator>= ( const ft::map<Key,T,Compare,Alloc>& lhs,
-                    const ft::map<Key,T,Compare,Alloc>& rhs )
-{
-    return (!operator<(lhs, rhs));
-}
-/*
-    _comp is equivalent to operator <. So:
-        - operator>(lhs, rhs)  <==>  _comp(rhs, lhs)
-        - operator<=(lhs, rhs)  <==>  !_comp(rhs, lhs)
-        - operator>=(lhs, rhs)  <==>  !_comp(lhs, rhs)
-*/
 #endif
