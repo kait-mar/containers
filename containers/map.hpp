@@ -266,19 +266,6 @@ namespace   ft
             return (1);
         }
 
-        /*size_type erase (const key_type& k)
-        {
-            iterator    i = _delete(k, _root);
-
-            if (i._node == _last_elem)
-                return (0);
-            node    *_node = i._node;
-            deleteNode(_node);
-            _size--;
-
-            return (1);
-        }*/
-
         void erase (iterator position)
         {
             node    *_node = position._node;
@@ -296,18 +283,6 @@ namespace   ft
         /*
             Removes all elements from the map container
         */
-        // void clear()
-        // {
-        //     iterator j, i;
-        //     if (_root == NULL)
-        //         return ;
-        //     i = begin();
-        //     while (i != end())
-        //      {
-        //         j = i++;
-        //         erase(j);
-        //      }
-        // }
 
         void clear()
         {
@@ -658,7 +633,6 @@ namespace   ft
                 if (replace->right)
                     replace->right->parent = replace;
                 _root = replace;
-                //deleteNode(_node);
                 deallocate_node(_node);
                 update_balance(_temp);
             }

@@ -26,10 +26,8 @@ namespace   ft
         typedef const T*                                    const_pointer;
         typedef typename ft::vector_iterator<value_type>             iterator;
         typedef typename ft::vector_iterator<const value_type>       const_iterator;
-        // typedef typename ft::vector_reverse_iterator<T>     reverse_iterator;
         typedef typename ft::reverse_iterator<iterator>         reverse_iterator;
-        // typedef typename ft::vector_reverse_iterator<const T>     const_reverse_iterator;
-        typedef typename ft::reverse_iterator<const_iterator>     const_reverse_iterator; //how to do so !!?
+        typedef typename ft::reverse_iterator<const_iterator>     const_reverse_iterator; 
         typedef ptrdiff_t                                   difference_type;
         typedef size_t                                      size_type;
 
@@ -112,7 +110,6 @@ namespace   ft
                 _alloc.destroy(array + i);
             if (_size)
                 _alloc.deallocate(array, this->_capacity);
-            // _capacity = 0; I removed it because of erase range tests
             _size = 0;
         }
 
@@ -160,22 +157,18 @@ namespace   ft
         }
         reverse_iterator    rbegin()
         {
-            // return (array + _size - 1);
             return (reverse_iterator(end()));
         }
         const_reverse_iterator    rbegin() const
         {
-            // return (array + _size - 1);
             return (const_reverse_iterator(end()));
         }
         reverse_iterator    rend()
         {
-            // return (array - 1);
             return (reverse_iterator(begin()));
         }
         const_reverse_iterator    rend() const
         {
-            // return (array - 1);
             return (const_reverse_iterator(begin()));
         }
         /*******************  capacity  ***************/
@@ -185,27 +178,8 @@ namespace   ft
         }
 
         // (2^64)/sizeof(dataType) - 1 ||  2^(64-sizeof(type))-1
-        // return std::numeric_limits<difference_type>::max() / sizeof(T);
-        // return std::numeric_limits<difference_type>::max() / sizeof(value_type);
-        // return (std::numeric_limits<size_type>::max() / (sizeof(ft::BNode<key_type, mapped_type>)));
-        //  size_type       max_size() const
-        //     {
-        //         if (sizeof(value_type) == 1)
-        //             return static_cast<size_type>(pow(2.0, 64.0) / 2.0) - 1;
-        //         return static_cast<size_type>(pow(2.0, 64.0) / static_cast<double>(sizeof(value_type))) - 1;
-        //     }
          size_type       max_size() const { return _alloc.max_size();}
-        // size_type       max_size() const 
-        // {
-        //     unsigned long res;
-        //     if (sizeof(value_type) != 1)
-        //     {
-        //         res = pow(2.0, 64.0) / sizeof(value_type) - 1;
-        //         return res;
-        //         // return static_cast<size_type>(pow(2.0, 64.0) / sizeof(value_type) - 1);
-        //     }
-        //     return static_cast<size_type>(pow(2.0, 64.0 - 1)) - 1;
-        // }
+
         size_type capacity() const
         {
             return (_capacity);
@@ -304,16 +278,11 @@ namespace   ft
                 for(size_type i = 0; i < this->_size; i++)
                     _alloc.construct(b + i, array[i]);
                 _alloc.construct(b + _size, val);
-                // size_type   cap2 = _capacity;
                 size_type   cap3 = _size;
                 if (_capacity)
                     this->~vector();
                 this->array = b;
                 _size = cap3 + 1;
-                // if (cap2)
-                //     _capacity = cap2 * 2;
-                // else
-                //     _capacity = cap2 + 1;
                 _capacity = cap;
             }
             else
@@ -331,43 +300,7 @@ namespace   ft
                 _alloc.destroy(array + _size-- - 1);
             }
         }
-        /*iterator erase (iterator position)
-        {
-            int _end = 0;
-            iterator    check;
-            int         ch = 0;
 
-            if (*position == array[_size])
-                _end = 1;
-            pointer     b = _alloc.allocate(_capacity);
-            size_type   copy_size = _size;
-            size_type   copy_capacity = _capacity;
-            int j = 0;
-            int k = -1;
-            for (iterator i = begin(); i != end(); ++i)
-            {
-                k++;
-                if (i == position)
-                {
-                    ch = 1;
-                    continue ;
-                }
-                _alloc.construct(b + j, array[k]);
-                j++;
-                if (ch == 1)
-                {
-                    check = i ;
-                    ch = 0;
-                }
-            }
-            this->~vector();
-            array = b;
-            _size = copy_size - 1;
-            _capacity = copy_capacity;
-            if (_end == 1)
-                return (end());
-            return (check);
-        }*/
         iterator erase (iterator position)
         {
             int _end = 0;
@@ -391,55 +324,13 @@ namespace   ft
             _size--;
             return (check);
         }
-        /*iterator erase (iterator first, iterator last)
-        {
-            int _end = 0;
-            iterator    check;
-            int         ch = 0;
-            int         dec = 0;
 
-            if (*last == array[_size])
-                _end = 1;
-            pointer     b = _alloc.allocate(_capacity);
-            size_type   copy_size = _size;
-            size_type   copy_capacity = _capacity;
-            int j = 0;
-            int k = -1;
-            for (iterator i = begin(); i != end(); ++i)
-            {
-                k++;
-                if (i == first)
-                {
-                    while (i != last)
-                    {
-                        k++; ++i; dec++;
-                    }
-                    ch = 1;
-                }
-                _alloc.construct(b + j, array[k]);
-                j++;
-                if (ch == 1)
-                {
-                    check = i;
-                    ch = 0;
-                }
-            }
-            this->~vector();
-            array = b;
-            _size = copy_size - dec;
-            _capacity = copy_capacity;
-            if (_end == 1)
-                return (end());
-            return (check);
-        }*/
         iterator erase (iterator first, iterator last)
         {
             size_t  distance = last - first;
 
             int k = 0;
             size_type   copy_size = 0;
-            // if (first == begin() && last == end())
-                // this->~vector();
             for (iterator i = begin(); i != end(); ++i)
             {
                 if (i >= first && i < last)
@@ -499,7 +390,6 @@ namespace   ft
                 {
                     --i;
                     _alloc.construct(array + j + 1, *(array + j));
-                    //if (j != _size - 1)
                     _alloc.destroy(array + j);
                     j--;
                 }
@@ -652,7 +542,7 @@ namespace   ft
                         }
                         for (size_type i = 0; i < v.size(); i++)
                         {
-                            _alloc.destroy(array + j); //what if it's not constructed before, is it okey ?
+                            _alloc.destroy(array + j);
                             _alloc.construct(array + j, v[i]);
                             j++;
                         }
@@ -667,15 +557,6 @@ namespace   ft
         {
             vector  temp;
 
-            /*this->~vector();
-            _size = x.size();
-            _capacity = x.capacity();
-            _alloc = x.get_allocator();
-            array = _alloc.allocate(_capacity);
-            for (size_type i = 0; i < x.size(); i++)
-                _alloc.construct(array + i, x[i]);
-            x = temp;
-            temp.~vector();*/
             temp.array = array;
             temp._capacity = _capacity;
             temp._size = _size;

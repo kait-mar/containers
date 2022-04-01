@@ -11,12 +11,10 @@ namespace ft
     public:
         /*************** member type **************/
         typedef ft::pair<const key, T>      value_type;
-        // typedef value_type*                          pointer;
         typedef value_type*                               pointer;
         typedef std::bidirectional_iterator_tag     iterator_category; 
         typedef ptrdiff_t                            difference_type;
         typedef Compare                              key_compare;
-        //typedef Distance                            distance_type;
         typedef value_type&                                  reference;
         typedef const value_type&                            const_reference;
 
@@ -63,7 +61,6 @@ namespace ft
         }
         map_iterator operator++()
         {
-           // if (_node->right && _node->right == _lastElem) this will maybe replaced with this
            if (_node == _lastElem->left) /*means it's the last element*/
                 _node = _lastElem;
             else if (_node->right && _node->right != _lastElem)
@@ -84,11 +81,10 @@ namespace ft
                         temp = temp->parent;
                     _node = temp;
                 }
-                //else if _node->parent == 0 ??
             }
             return (*this);
         }
-        map_iterator operator--() // add the case of --to first element in map
+        map_iterator operator--()
         {
             node* temp = _node;
 
@@ -129,32 +125,7 @@ namespace ft
             --(*this);
             return (res);
         }
-        // map_iterator operator+(int a)
-        // {
-        //     map_iterator  res(*this);
-        //     while (a--)
-        //         ++res;
-        //     return (res);
-        // }
-        // map_iterator operator-(int a)
-        // {
-        //     map_iterator res(*this);
-        //     while (a--)
-        //         --res;
-        //     return (res);
-        // }
-        // map_iterator operator+=(int a)
-        // {
-        //     while (a--)
-        //         ++(*this);
-        //     return (*this);
-        // }
-        // map_iterator operator-=(int a)
-        // {
-        //     while (a--)
-        //         --(*this);
-        //     return (*this);
-        // }
+
         reference  operator*() const
         {
             return (_node->content);

@@ -15,7 +15,6 @@ namespace ft
         typedef T*                                  pointer;
         typedef std::random_access_iterator_tag     iterator_category;
         typedef ptrdiff_t                           difference_type; //sustruct two iterators result
-        //typedef Distance                            distance_type;
         typedef T&                                  reference;
 
     private:
@@ -51,7 +50,7 @@ namespace ft
             elem--;
             return (*this);
         }
-        vector_iterator operator++(int) //get_sure of this , try to compile i++
+        vector_iterator operator++(int)
         {
             vector_iterator res(*this);
             ++(*this);
@@ -97,14 +96,13 @@ namespace ft
         {
             return (elem);
         }
-        reference operator[] (difference_type n) const //not sure about this !!!
+        reference operator[] (difference_type n) const
         {
             return *(elem + n);
         }
         operator vector_iterator<const T> () const
         {
             return (vector_iterator<const T>(elem));
-            //return elem;
         }
         pointer get_elem() const
         {

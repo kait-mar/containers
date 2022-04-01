@@ -9,7 +9,6 @@ namespace   ft
     class reverse_iterator {
     private:
         Iterator    _it;
-        //pointer     _elem;
     public:
         /*member types */
         typedef Iterator    iterator_type;
@@ -18,7 +17,6 @@ namespace   ft
         typedef typename iterator_traits<Iterator>::difference_type  difference_type;
         typedef typename iterator_traits<Iterator>::pointer  pointer;
         typedef typename iterator_traits<Iterator>::reference    reference;
-        // typedef Iterator<const Iterator::value_type>       const_iterator;
 
             /*constructors*/
         reverse_iterator() {_it = iterator_type();}
@@ -40,7 +38,6 @@ namespace   ft
         }
         reference operator*() const
         {
-            // iterator_type   res(_it - 1);
             iterator_type   res(_it);
             res--;
             return *res;
@@ -93,18 +90,11 @@ namespace   ft
                 --(*this);
             return *this;
         }
-        // pointer operator->() const
-        // {
-        //     return &((_it - 1).operator*());
-        // }
         pointer operator->() const
         {
-            // iterator_type   res(_it);
-            // res--;
-
             return &(operator*());
         }
-        reference operator[] (difference_type n) const //not sure about this !!!
+        reference operator[] (difference_type n) const
         {
             return *(_it - n - 1);
         }
